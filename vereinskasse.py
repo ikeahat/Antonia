@@ -5,9 +5,8 @@ import Tkinker
 def account_perm_string(number):
     return ["Treasurer", "Finance Officer", "Admin"][number]
 
-
 class Account:
-    def __init__(self, name, password, account_type, department=None):
+    def __init__(self, name, password, account_type: int, department=None):
         self.name = name
         self.password = password
         self.account_type = account_type
@@ -18,3 +17,8 @@ class Account:
         if self.department is not None:
             s += f"\nDepartment: {str(self.department)}"
         return s
+
+class Department:
+    def __init__(self, name, balance: int):
+        self.name = name
+        self.balace = balance
