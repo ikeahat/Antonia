@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>120</y>
+      <w>450</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>Account
+-
+name : tuple(str,str)
+password : str (?)
+account_type : int
+department : Department
+-
+init(self, name, password, account_type, department=None)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>300</y>
+      <w>350</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>Department
+-
+name : str
+balance : float
+-
+init(name:str)
+add_money(amount:int)
+remove_money(amount:int) : bool
+transfer(department:Department, amount:int) : bool
+can_pay(amount:int) : bool
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>40</x>
+      <y>40</y>
+      <w>160</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>censored, Popovic
+censored, Wolff
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>120</y>
+      <w>480</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>System
+-
+title :str
+accounts : list&lt;Account&gt;
+departments : list&lt;Department&gt;
+-
+init(title)
+create_account(name, password, account_type, department=None)
+delete_account(account : Account)
+find_account(name) : Account
+import_accounts(filepath)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
