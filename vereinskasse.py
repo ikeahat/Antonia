@@ -18,7 +18,30 @@ class Account:
             s += f"\nDepartment: {str(self.department)}"
         return s
 
+departments = []
+
+def display_departments():
+    print("\nDepartments:")
+    for idx, department in enumerate(departments):
+        print(f"{idx}: {department['name']}")
+
+
 class Department:
     def __init__(self, name, balance: int):
         self.name = name
-        self.balace = balance
+        self.balance = balance
+    def can_pay(self, balance, amount) -> bool:
+        return self.balance - self.amount >= 0
+    def withdrawal(self, amount: int):
+        amount = input("amount:")
+        if self.can_pay() == True:
+            self.balance = self.balance - amount
+    def deposit(self, amount: int):
+        amount = input("amount:")
+        self.balance = self.balance + amount
+    def transfer(self, amount: int, recipient: Department):
+        display_departments()  # Choose recipient
+        amount = input("amount:")
+        if self.can_pay() == True:
+            self.balance = self.balance - amount
+            recipient.balance = recipient.balance + amount
