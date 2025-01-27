@@ -1,6 +1,7 @@
 # TODO author
 
-from Tkinker import tk
+import tkinter as tk
+
 from datetime import datetime
 def account_perm_string(number):
     return ["Treasurer", "Finance Officer", "Admin"][number]
@@ -88,3 +89,8 @@ class System:
                     f.write({transaction.sender_name} + {transaction.text} + {transaction.amount})
                 elif transaction.type == "transfer":
                     f.write(f"{transaction.sender_name} + {transaction.text} + {transaction.amount} to {transaction.recipient}")
+    def save_current_balance(self):
+        for department in self.departments:
+            balance_filename = "balance"
+            with open(balance_filename, "a") as f:
+                f.write(department.balance)
