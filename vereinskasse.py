@@ -19,15 +19,20 @@ class Account:
             s += f"\nDepartment: {str(self.department)}"
         return s
 
+
+'''
 departments = []
 
 def display_departments():
     print("\nDepartments:")
     for idx, department in enumerate(departments):
         print(f"{idx}: {department['name']}")
+        '''
+
 
 class Department:
     def __init__(self, name, balance: int):
+        self.transactions = []
         self.name = name
         self.balance = balance
     def can_pay(self, balance, amount) -> bool:
@@ -48,7 +53,6 @@ class Department:
         a = Transaction(self, amount, type, text)
         self.transactions.append(a)
     def transfer(self, amount: int, recipient: Department):
-        display_departments()  # Choose recipient
         type = "transfer"
         text = "has transfered"
         amount = input("amount:")
@@ -58,7 +62,7 @@ class Department:
         a = Transaction(self, amount, type, text)
         self.transactions.append(a)
 
-transactions = []
+
 
 class Transaction:
     def __init__(self, amount, type, text, sender_name):
@@ -76,11 +80,19 @@ class System:
     def create_account(self, name, password, type: int, department = None):
         a = Account(name, password, type, department)
         self.accounts.append(a)
+    def create_department(self, name, balance: int):
+        a = Department(name, balance)
+        self.departments.append(a)
     def find_account(self, name):
         for acc in self.accounts:
             if acc.name == name:
                 return acc
-    def add_to_transaction_history():
+    def find_department(self, name):
+        for dep in self.departments:
+            if dep.name == name:
+                return dep
+
+    '''def add_to_transaction_history():
         transaction_filename = f"transaction history: {Department}.txt"
         with open(transaction_filename, "a") as f:
             for transaction in transactions:
@@ -88,9 +100,12 @@ class System:
                 if transaction.type == "withdrawal" or "deposit":
                     f.write({transaction.sender_name} + {transaction.text} + {transaction.amount})
                 elif transaction.type == "transfer":
-                    f.write(f"{transaction.sender_name} + {transaction.text} + {transaction.amount} to {transaction.recipient}")
+                    f.write(f"{transaction.sender_name} + {transaction.text} + {transaction.amount} to {transaction.recipient}")'''
+    
     def save_current_balance(self):
         for department in self.departments:
             balance_filename = "balance"
+            timestamp = str(datetime.now())
             with open(balance_filename, "a") as f:
-                f.write(department.balance)
+                f.write(timestamp)
+                f.write("\n" + department.balance)
