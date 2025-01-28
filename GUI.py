@@ -1,5 +1,7 @@
 import tkinter as tk
+import tkinter.ttk as ttk
 from vereinskasse import *
+
 
 class SystemGUI:
     def __init__(self):
@@ -18,8 +20,17 @@ class SystemGUI:
         om = tk.OptionMenu(self.root, login_names, *login_names)
         om.pack()
 
+root = tk.Tk()
 
-gui = SystemGUI()
+b0 = ttk.Button(root, text = "transfer", command = Department.transfer)
+b0.pack()
+b1 = ttk.Button(root, text = "Doch", command = hallo)
+b1.pack()
+b2 = tk.Button(root, text="Nein", command = root.destroy)
+b2.pack()
+root.mainloop()
+
+'''gui = SystemGUI()
 gui.sys.create_account(("admin", "admin"), "hiabc", 0)
 gui.login_gui()
-gui.start()
+gui.start()'''
