@@ -14,9 +14,13 @@ class SystemGUI:
     def login_gui(self):
         selected = tk.StringVar()
         login_names = [acc.name for acc in self.sys.accounts]
-        print(login_names)
-        om = tk.OptionMenu(self.root, login_names, *login_names)
-        om.pack()
+        username_menu = tk.OptionMenu(self.root, selected, *login_names)
+        username_menu.grid(row=0,column=1)
+        tk.Label(self.root, "Nutzer").grid(row=0,column=0)
+        tk.Label(self.root, "Passwort").grid(row=1, column=0)
+        password_entry = tk.Entry(self.root)
+        password_entry.grid(row=1,column=1)
+
 
 
 gui = SystemGUI()
