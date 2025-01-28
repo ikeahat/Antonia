@@ -14,7 +14,7 @@ class Account:
         self.department = department
     
     def __str__(self):
-        s = f"First name: {self.name[0]}\nLast name: {self.name[1]}\nAccount type: {account_perm_string(self.account_type)}"
+        s = f"First name: {self.name[0]}\nLast name: {self.name[1]}\nAccount type: {account_perm_string(self.type)}"
         if self.department is not None:
             s += f"\nDepartment: {str(self.department)}"
         return s
@@ -52,7 +52,7 @@ class Department:
         self.balance = self.balance + amount
         a = Transaction(self, amount, type, text)
         self.transactions.append(a)
-    def transfer(self, amount: int, recipient: Department):
+    def transfer(self, amount: int, recipient):
         type = "transfer"
         text = "has transfered"
         amount = input("amount:")
