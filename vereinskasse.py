@@ -62,8 +62,6 @@ class Department:
         a = Transaction(self, amount, type, text)
         self.transactions.append(a)
 
-
-
 class Transaction:
     def __init__(self, amount, type, text, sender_name):
         self.sender_name = sender_name
@@ -109,3 +107,4 @@ class System:
             with open(balance_filename, "a") as f:
                 f.write(timestamp)
                 f.write("\n" + department.balance)
+
