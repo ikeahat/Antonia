@@ -79,11 +79,11 @@ class System:
     def create_department(self, name, balance: int):
         a = Department(name, balance)
         self.departments.append(a)
-    def find_account(self, name):
+    def find_account(self, name) -> Account:
         for acc in self.accounts:
-            if acc.name == name:
+            if str(acc.name) == name:
                 return acc
-    def find_department(self, name):
+    def find_department(self, name) -> Department:
         for dep in self.departments:
             if dep.name == name:
                 return dep
