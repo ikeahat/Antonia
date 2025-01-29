@@ -7,18 +7,17 @@ def account_perm_string(number):
     return ["Treasurer", "Finance Officer", "Admin"][number]
 
 class Account:
-    def __init__(self, name, password, type: int, department=None):
+    def __init__(self, name, password, acc_type: int, department=None):
         self.name = name
         self.password = password
-        self.type = type
+        self.acc_type = acc_type
         self.department = department
     
     def __str__(self):
-        s = f"First name: {self.name[0]}\nLast name: {self.name[1]}\nAccount type: {account_perm_string(self.type)}"
+        s = f"First name: {self.name[0]}\nLast name: {self.name[1]}\nAccount type: {account_perm_string(self.acc_type)}"
         if self.department is not None:
             s += f"\nDepartment: {str(self.department)}"
         return s
-
 
 '''
 departments = []
@@ -28,7 +27,6 @@ def display_departments():
     for idx, department in enumerate(departments):
         print(f"{idx}: {department['name']}")
         '''
-
 
 class Department:
     def __init__(self, name, balance: int):
@@ -73,8 +71,8 @@ class Transaction:
 class System:
     def __init__(self, title, accounts: list, departments: list):
         self.title = title
-        self.accounts = []
-        self.departments = []
+        self.accounts = accounts
+        self.departments = departments
     def create_account(self, name, password, type: int, department = None):
         a = Account(name, password, type, department)
         self.accounts.append(a)
@@ -107,4 +105,3 @@ class System:
             with open(balance_filename, "a") as f:
                 f.write(timestamp)
                 f.write("\n" + department.balance)
-
