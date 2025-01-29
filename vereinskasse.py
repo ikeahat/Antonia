@@ -18,6 +18,8 @@ class Account:
         if self.department is not None:
             s += f"\nDepartment: {str(self.department)}"
         return s
+    def is_admin(self):
+        return self.acc_type == "admin"
 
 '''
 departments = []
