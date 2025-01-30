@@ -69,6 +69,7 @@ class Transaction:
         self.amount = amount
         self.text = text
         self.time = str(datetime.now())
+    
 
 class System:
     def __init__(self, title, accounts: list, departments: list):
@@ -91,7 +92,7 @@ class System:
                 return dep
 
     '''def add_to_transaction_history():
-        transaction_filename = f"transaction history: {Department}.txt"
+        transaction_filename = f"transaction history {Department}.txt"
         with open(transaction_filename, "a") as f:
             for transaction in transactions:
                 f.write(transaction.time)

@@ -21,6 +21,27 @@ class SystemGUI:
     def start(self):
         self.login_gui()
         self.root.mainloop()
+    def try_create_department(self, name):
+        if name == "":
+            tk.Label(self.root, text="Invalid input.").grid(row=0,column=2, columnspan=2)
+        if self.sys.find_department(name) is not None:
+            tk.Label(self.root, text="This department already exists.").grid(row=0, column=2,columnspan=2)
+            return
+        self.sys.create_department(name, 0)
+        self.admin_gui()
+    def new_department_gui(self):
+        self.create_root()
+        # all tk vars
+        var_name = tk.StringVar()
+        # entry field:
+        tk.Entry(self.root, textvariable=var_name).grid(column=1,row=0)
+        tk.Label(self.root, text="Department name").grid(column=0,row=0)
+        tk.Button(self.root, text="Create Department", command=lambda: self.try_create_department(var_name.get())).grid(column=0, row=1)
+        tk.Button(self.root, text="Cancel", command=lambda: self.admin_gui()).grid(column=1,row=1)
+
+
+    def try_create_account(self, name1, name2, password, type):
+        pass # TODO
     def new_account_gui(self):
         self.create_root()
         # all tk vars
@@ -32,22 +53,29 @@ class SystemGUI:
         tk.Entry(self.root, textvariable=var_name1).grid(column=1, row=0)
         tk.Entry(self.root, textvariable=var_name2).grid(column=1, row=1)
         tk.Entry(self.root, textvariable=var_password, show="*", bg="black", fg="white").grid(column=1, row=2)
+
         account_types = ["admin", "treasurer", "officer"]
+        department_names = [d.name for d in self.sys.departments]  # TODO
+
+        var_account_type.set(account_types[0])
         tk.OptionMenu(self.root, var_account_type, *account_types).grid(column=1,row=3)
         # TODO Auswahl für Departments (sofern treasurer account)
         # TODO Button to actually create account and return to previous window etc.
         for i in range(4):
             tk.Label(self.root, text=(["Vorname", "Nachname", "Passwort", "Accounttyp"][i])).grid(column=0, row=i)
+        
 
     def admin_gui(self):
         self.create_root()
         # button to open account creation GUI
-        new_acc_button = tk.Button(self.root, text="Neues Nutzerkonto", command=self.new_account_gui)
-        new_acc_button.grid(row=0,column=0,columnspan=2)
+        new_acc_button = tk.Button(self.root, text="New Account", command=self.new_account_gui)
+        new_acc_button.grid(row=0,column=0)
+        tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
 
     def login(self, account : Account):
         self.account = account
-        self.admin_gui()
+        if account.is_admin():
+            self.admin_gui()
 
     def try_login(self, var, password):
         acc_name = var.get()
