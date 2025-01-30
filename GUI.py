@@ -58,6 +58,14 @@ class SystemGUI:
         self.sys.create_account((name1, name2), password, acc_type, self.sys.find_department(department_name))
         self.admin_gui()
 
+    def transfer_gui(self):
+        department_names = [d.name for d in self.sys.departments]
+        self.create_root()
+        selected = tk.StringVar()
+        var_amount = tk.IntVar()
+        tk.OptionMenu(self.root, selected, *department_names).grid(column=1, row=0)
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
     def new_account_gui(self):
         self.create_root()
         # all tk vars
