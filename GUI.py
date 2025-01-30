@@ -37,18 +37,26 @@ class SystemGUI:
         tk.Entry(self.root, textvariable=var_name).grid(column=1,row=0)
         tk.Label(self.root, text="Department name").grid(column=0,row=0)
         tk.Button(self.root, text="Create Department", command=lambda: self.try_create_department(var_name.get())).grid(column=0, row=1)
-        tk.Button(self.root, text="Cancel", command=lambda: self.admin_gui()).grid(column=1,row=1)
+        tk.Button(self.root, text="Cancel", command=self.admin_gui).grid(column=1,row=1)
 
-    def try_create_account(self, name1, name2, password, type):
-        pass # TODO
-    
-    def transfer_gui(self):
-        department_names = [d.name for d in self.sys.departments]
-        self.create_root()
-        selected = tk.StringVar()
-        var_amount = tk.IntVar()
-        tk.OptionMenu(self.root, selected, *department_names).grid(column=1, row=0)
-        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
+    def try_create_account(self, name1, name2, password, acc_type, department_name):
+        # check for empty fields
+        invalid = False
+        for s in [name1, name2, password, acc_type]:
+            if s == "":
+                invalid = True
+                break
+        if acc_type == "treasurer" and department_name == "":
+            invalid = True
+        if invalid:
+            tk.Label(self.root, text="Invalid input.").grid(column=0,row=6,columnspan=2)
+            return
+        if self.sys.find_account((name1, name2)) is not None:
+            tk.Label(self.root, text="Account already exists.").grid(column=0, row=6, columnspan=2)
+            return
+        self.sys.create_account((name1, name2), password, acc_type, self.sys.find_department(department_name))
+        self.admin_gui()
 
     def new_account_gui(self):
         self.create_root()
@@ -57,21 +65,24 @@ class SystemGUI:
         var_name2 = tk.StringVar()
         var_password = tk.StringVar()
         var_account_type = tk.StringVar()
+        var_department_name = tk.StringVar()
         # tk entry fields
         tk.Entry(self.root, textvariable=var_name1).grid(column=1, row=0)
         tk.Entry(self.root, textvariable=var_name2).grid(column=1, row=1)
         tk.Entry(self.root, textvariable=var_password, show="*", bg="black", fg="white").grid(column=1, row=2)
 
         account_types = ["admin", "treasurer", "officer"]
-        department_names = [d.name for d in self.sys.departments]  # TODO
+        department_names = [d.name for d in self.sys.departments]
 
         var_account_type.set(account_types[0])
         tk.OptionMenu(self.root, var_account_type, *account_types).grid(column=1,row=3)
-        # TODO Auswahl für Departments (sofern treasurer account)
-        # TODO Button to actually create account and return to previous window etc.
-        for i in range(4):
-            tk.Label(self.root, text=(["Vorname", "Nachname", "Passwort", "Accounttyp"][i])).grid(column=0, row=i)
+        for i in range(5):
+            tk.Label(self.root, text=(["First Name", "Last Name", "Password", "Account Type", "Department\n(if neccessary)"][i])).grid(column=0, row=i)
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=1,row=4)
         
+        tk.Button(self.root, text="Create Account", command=lambda: self.try_create_account(var_name1.get(), var_name2.get(), var_password.get(), var_account_type.get(), var_department_name.get())).grid(column=1, row=5)
+        tk.Button(self.root, text="Cancel", command=self.admin_gui).grid(column=0, row=5)
+
 
     def admin_gui(self):
         self.create_root()
