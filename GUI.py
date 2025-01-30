@@ -62,16 +62,17 @@ class SystemGUI:
         login_names = [acc.name for acc in self.sys.accounts]
         selected = tk.StringVar()
         username_menu = tk.OptionMenu(self.root, selected, *login_names)
-        username_menu.grid(row=0,column=1)
+        username_menu.grid(row=0, column=1)  
         
-        tk.Label(self.root, text="Nutzer").grid(row=0,column=0)
-        tk.Label(self.root, text="Passwort").grid(row=1, column=0)
+        tk.Label(self.root, text="user:").grid(row=0,column=0)
+        tk.Label(self.root, text="password:").grid(row=1, column=0)
         
         password_var = tk.StringVar()
         password_entry = tk.Entry(self.root, show="*", textvariable=password_var , bg="black", fg="white")
         password_entry.grid(row=1,column=1)
-
-        login_button = tk.Button(self.root, text="Anmelden", command=lambda: self.try_login(selected, password_var.get()))
+        x = lambda: self.try_login(selected, password_var.get())
+        password_entry.bind("<Return>", lambda event: self.try_login(selected, password_var.get()))
+        login_button = tk.Button(self.root, text="login", command=x)
         login_button.grid(row=2,column=0,columnspan=2)
 
 
