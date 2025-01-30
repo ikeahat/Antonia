@@ -20,6 +20,10 @@ class Account:
         return s
     def is_admin(self):
         return self.acc_type == "admin"
+    def is_treasurer(self):
+        return self.acc_type == "admin"
+    def is_officer(self):
+        return self.acc_type == "officer"
 
 '''
 departments = []

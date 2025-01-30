@@ -39,9 +39,17 @@ class SystemGUI:
         tk.Button(self.root, text="Create Department", command=lambda: self.try_create_department(var_name.get())).grid(column=0, row=1)
         tk.Button(self.root, text="Cancel", command=lambda: self.admin_gui()).grid(column=1,row=1)
 
-
     def try_create_account(self, name1, name2, password, type):
         pass # TODO
+    
+    def transfer_gui(self):
+        department_names = [d.name for d in self.sys.departments]
+        self.create_root()
+        selected = tk.StringVar()
+        var_amount = tk.IntVar()
+        tk.OptionMenu(self.root, selected, *department_names).grid(column=1, row=0)
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
     def new_account_gui(self):
         self.create_root()
         # all tk vars
@@ -72,10 +80,19 @@ class SystemGUI:
         new_acc_button.grid(row=0,column=0)
         tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
 
+    def treasurer_gui(self):
+        self.create_root()
+        new_transfer_button = tk.Button(self.root, text="transfer", command=self.transfer_gui)
+
+        
     def login(self, account : Account):
         self.account = account
         if account.is_admin():
             self.admin_gui()
+        if account.is_treasurer():
+            self.treasurer_gui()
+        if account.is_officer():
+            self.officer_gui()
 
     def try_login(self, var, password):
         acc_name = var.get()
