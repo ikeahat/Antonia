@@ -21,9 +21,15 @@ class SystemGUI:
     def start(self):
         self.login_gui()
         self.root.mainloop()
+    def logout(self):
+        self.account = None
+        self.login_gui()
+        self.sys.save_accounts()
+        self.sys.save_departments()
     def try_create_department(self, name):
         if name == "":
             tk.Label(self.root, text="Invalid input.").grid(row=0,column=2, columnspan=2)
+            return
         if self.sys.find_department(name) is not None:
             tk.Label(self.root, text="This department already exists.").grid(row=0, column=2,columnspan=2)
             return
@@ -47,15 +53,22 @@ class SystemGUI:
             if s == "":
                 invalid = True
                 break
-        if acc_type == "treasurer" and department_name == "":
-            invalid = True
-        if invalid:
+        department = None
+        # check for department field if acctype is treasurer
+        if acc_type == "treasurer":
+            if department_name == "":
+                invalid = True
+            else:
+                department = self.sys.find_department(department_name)
+                if department is None:
+                    invalid = True
+        if invalid:  # output invalid input message
             tk.Label(self.root, text="Invalid input.").grid(column=0,row=6,columnspan=2)
             return
         if self.sys.find_account((name1, name2)) is not None:
             tk.Label(self.root, text="Account already exists.").grid(column=0, row=6, columnspan=2)
             return
-        self.sys.create_account((name1, name2), password, acc_type, self.sys.find_department(department_name))
+        self.sys.create_account((name1, name2), password, acc_type, department)
         self.admin_gui()
 
     def new_account_gui(self):
@@ -73,6 +86,7 @@ class SystemGUI:
 
         account_types = ["admin", "treasurer", "officer"]
         department_names = [d.name for d in self.sys.departments]
+        department_names.append("")
 
         var_account_type.set(account_types[0])
         tk.OptionMenu(self.root, var_account_type, *account_types).grid(column=1,row=3)
@@ -90,6 +104,7 @@ class SystemGUI:
         new_acc_button = tk.Button(self.root, text="New Account", command=self.new_account_gui)
         new_acc_button.grid(row=0,column=0)
         tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
+        tk.Button(self.root, text="Log out", command=self.logout).grid(row=0,column=1)
 
     def login(self, account : Account):
         self.account = account
