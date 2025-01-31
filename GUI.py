@@ -24,8 +24,7 @@ class SystemGUI:
     def logout(self):
         self.account = None
         self.login_gui()
-        self.sys.save_accounts()
-        self.sys.save_departments()
+        self.sys.save_all()
     def try_create_department(self, name):
         if name == "":
             tk.Label(self.root, text="Invalid input.").grid(row=0,column=2, columnspan=2)
@@ -71,6 +70,25 @@ class SystemGUI:
         self.sys.create_account((name1, name2), password, acc_type, department)
         self.admin_gui()
 
+    def transfer_gui(self):
+        department_names = [d.name for d in self.sys.departments]
+        self.create_root()
+        selected = tk.StringVar()
+        var_amount = tk.IntVar()
+        tk.OptionMenu(self.root, selected, *department_names).grid(column=1, row=0)
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
+    def deposit_gui(self):
+        self.create_root()
+        var_amount = tk.IntVar()
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
+    def withdraw_gui(self):
+        self.create_root()
+        var_amount = tk.IntVar()
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
+
     def new_account_gui(self):
         self.create_root()
         # all tk vars
@@ -106,10 +124,20 @@ class SystemGUI:
         tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
         tk.Button(self.root, text="Log out", command=self.logout).grid(row=0,column=1)
 
+    def treasurer_gui(self):
+        self.create_root()
+        new_transfer_button = tk.Button(self.root, text="transfer", command=self.transfer_gui)
+        new_deposit_button = tk.Button(self.root, text="deposit", command=self.deposit_gui)
+        new_withdraw_button = tk.Button(self.root, text="withdraw", command=self.withdraw_gui)
+        
     def login(self, account : Account):
         self.account = account
         if account.is_admin():
             self.admin_gui()
+        elif account.is_treasurer():
+            self.treasurer_gui()
+        #elif account.is_officer():
+            #self.officer_gui()
 
     def try_login(self, var, password):
         acc_name = var.get()

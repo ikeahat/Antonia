@@ -22,6 +22,10 @@ class Account:
         return s
     def is_admin(self):
         return self.acc_type == "admin"
+    def is_treasurer(self):
+        return self.acc_type == "admin"
+    def is_officer(self):
+        return self.acc_type == "officer"
     def get_department_name(self):
         if self.department is None:
             return ""
@@ -90,16 +94,19 @@ class System:
                  acc.password,
                  acc.acc_type,
                  acc.get_department_name()] for acc in self.accounts]
-        with open("accounts.csv", "w", newline="") as file:
+        with open("data/accounts.csv", "w", newline="") as file:
             csv.writer(file).writerows(data)
     def save_departments(self):
         data = [[dpt.name, dpt.balance] for dpt in self.departments]
-        with open("departments.csv", "w") as file:
+        with open("data/departments.csv", "w", newline="") as file:
             csv.writer(file).writerows(data)
     def save_departments_history(self):
         for department in self.departments:
             data = [[t.amount, t.text] for t in department.transactions]
-            with open("data/transactions" + department.name + ".csv", "w") as file:
+            with open("data/transactions/" + department.name + ".csv", "w", newline="") as file:
                 csv.writer(file).writerows(data)
     def save_all(self):
-
+        self.create_directories()
+        self.save_accounts()
+        self.save_departments()
+        self.save_departments_history()
