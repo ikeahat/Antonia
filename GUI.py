@@ -66,6 +66,17 @@ class SystemGUI:
         tk.OptionMenu(self.root, selected, *department_names).grid(column=1, row=0)
         tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
 
+    def deposit_gui(self):
+        self.create_root()
+        var_amount = tk.IntVar()
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
+    def withdraw_gui(self):
+        self.create_root()
+        var_amount = tk.IntVar()
+        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+
+
     def new_account_gui(self):
         self.create_root()
         # all tk vars
@@ -102,7 +113,8 @@ class SystemGUI:
     def treasurer_gui(self):
         self.create_root()
         new_transfer_button = tk.Button(self.root, text="transfer", command=self.transfer_gui)
-
+        new_deposit_button = tk.button(self.root, text="deposit", command=self.deposit_gui)
+        new_withdraw_button = tk.Button(self.root, text="withdraw", command=self.withdraw_gui)
         
     def login(self, account : Account):
         self.account = account
