@@ -104,8 +104,21 @@ class SystemGUI:
 
     def money_gui(self, arg):
         self.create_root()
-        var_amount = tk.IntVar()
-        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
+        title = ["Deposit Money.", "Withdraw Money.", "Transfer Money."][arg]
+        tk.Label(self.root, text=title).grid(row=0,column=0)
+        
+        var_amount = tk.StringVar()
+        tk.Label(self.root, text="Amount:").grid(row=1,column=0)
+        tk.Entry(self.root, textvariable=var_amount).grid(row=1,column=1)
+        var_department = tk.StringVar()
+        if arg == 2:
+            department_names = [d.name for d in self.sys.departments]
+            department_names.remove(self.account.department.name)  # remove own department
+            department_names.append("")
+            tk.OptionMenu(self.root, var_department, *department_names).grid(column=1, row=2)
+        
+        tk.Button(self.root, text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3,column=1)
+        tk.Button(self.root, text="Cancel", command=self.treasurer_gui).grid(column=1, row=4)
 
     def new_account_gui(self):
         self.create_root()
