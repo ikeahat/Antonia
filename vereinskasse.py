@@ -61,11 +61,6 @@ class Transaction:
     def __init__(self, amount, text):
         self.amount = amount
         self.text = text
-    def __str__(self):
-        output_string = f"{str(self.amount)} : {self.text}"
-        if self.amount >= 0:
-            output_string = "+" + output_string
-        return output_string
 class System:
     def __init__(self):
         self.accounts = []
