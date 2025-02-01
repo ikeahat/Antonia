@@ -6,6 +6,7 @@ import tkinter.ttk as ttk
 from tkinter import messagebox
 from backend import *
 
+
 class SystemGUI:
     """
     A class which manages the GUI in combination with the System.
@@ -29,6 +30,8 @@ class SystemGUI:
             self.root.destroy()
         self.root = tk.Tk()
         self.center_window()
+
+
     def center_window(self, width = 400, height = 300):
         """
         Root window is centerd on the screen.
@@ -38,6 +41,8 @@ class SystemGUI:
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
         self.root.geometry(f"{width}x{height}+{x}+{y}")
+
+
     def start(self):
         """
         Start up the application. Calls the login_gui method and starts
@@ -45,6 +50,8 @@ class SystemGUI:
         """
         self.login_gui()  # Login GUI is called.
         self.root.mainloop()  # Mainloop is called.
+
+
     def logout(self):
         """
         Logs the user out and returns to the login GUI.
@@ -284,6 +291,7 @@ class SystemGUI:
                   font = ('Courier New', 15, "bold"),
                   fg = "red", command = self.logout).grid(row = 7, column = 1, sticky = "we")
 
+
     def officer_gui(self):
         """
         Creates the GUI for a finance officer account.
@@ -291,16 +299,31 @@ class SystemGUI:
         self.create_root()
         self.root.title("FINANCE OFFICER")
         tk.Label(self.root, text = "", width = 10).grid(row = 0, column = 0, columnspan = 3)
+        tk.Button(self.root, 
+                  text = "club summary", 
+                  font = ('Courier New', 15), 
+                  command = self.summary_gui).grid(column = 0, row = 1)
         tk.Label(self.root, text = "", width = 10).grid(row = 2, column = 0, columnspan = 3)
-        tk.Button(self.root, text = "Log Out", font = ('Courier New', 15), fg="red", command = self.logout).grid(row = 4, column = 0)
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column = 0, row = 3)
+        tk.Button(self.root, 
+                  text = "Log Out", 
+                  font = ('Courier New', 15), 
+                  fg="red", 
+                  command = self.logout).grid(row = 4, column = 0)
         # Department wise summary.
-        tk.Button(self.root, text = "club summary", font = ('Courier New', 15), command = self.summary_gui).grid(column = 0, row = 1)
+        
         department_names = [d.name for d in self.sys.departments]
         # Dep list cant be empty.
         department_names.append("")
         var_department_name = tk.StringVar()
-        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column = 0, row = 3)
-        tk.Button(self.root, text = "View Department", font = ('Courier New', 15), command = lambda: self.try_department_history_gui(var_department_name.get())).grid(column = 1, row = 3)
+        
+        tk.Button(self.root, 
+                  text = "View Department", 
+                  font = ('Courier New', 15), 
+                  command = lambda: self.try_department_history_gui(
+                      var_department_name.get()
+                      )).grid(column = 1, row = 3)
+
 
     def treasurer_gui(self):
         """
