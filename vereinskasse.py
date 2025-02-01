@@ -31,7 +31,6 @@ class Account:
             return ""
         return self.department.name
 
-
 class Department:
     def __init__(self, name, balance: int):
         self.transactions = []
