@@ -7,18 +7,8 @@ class SystemGUI:
     def __init__(self):
         self.sys = System()
         self.root = None
-<<<<<<< HEAD
         self.account = None
         self.sys.load_if_exists()
-    def create_root(self, geometry="300x200"):
-        if self.root:
-            self.root.destroy()
-        self.root = tk.Tk()
-        self.root.geometry(geometry)
-=======
-
-        admin_account = Account(("first", "last"), "abc", "admin")
-        self.sys = System("title", [admin_account], [])
     def create_root(self):
         if self.root:
             self.root.destroy()
@@ -30,7 +20,6 @@ class SystemGUI:
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
         window.geometry(f"{width}x{height}+{x}+{y}")
->>>>>>> 0766615f2baf0fc13a8b849431c05b64aae6b42c
     def clear(self):
         """Clear all widgets from tk screen"""
         for widget in self.root.winfo_children():
@@ -116,26 +105,8 @@ class SystemGUI:
 
     def money_gui(self, arg):
         self.create_root()
-<<<<<<< HEAD
-        title = ["Deposit Money.", "Withdraw Money.", "Transfer Money."][arg]
-        tk.Label(self.root, text=title).grid(row=0,column=0)
-        
-        var_amount = tk.StringVar()
-        tk.Label(self.root, text="Amount:").grid(row=1,column=0)
-        tk.Entry(self.root, textvariable=var_amount).grid(row=1,column=1)
-        var_department = tk.StringVar()
-        if arg == 2:
-            department_names = [d.name for d in self.sys.departments]
-            department_names.remove(self.account.department.name)  # remove own department
-            department_names.append("")
-            tk.OptionMenu(self.root, var_department, *department_names).grid(column=1, row=2)
-        
-        tk.Button(self.root, text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3,column=1)
-        tk.Button(self.root, text="Cancel", command=self.treasurer_gui).grid(column=1, row=4)
-=======
         var_amount = tk.IntVar()
         tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
->>>>>>> 0766615f2baf0fc13a8b849431c05b64aae6b42c
 
     def new_account_gui(self):
         self.create_root()
@@ -166,12 +137,6 @@ class SystemGUI:
     def admin_gui(self):
         self.create_root()
         # button to open account creation GUI
-<<<<<<< HEAD
-        new_acc_button = tk.Button(self.root, text="New Account", command=self.new_account_gui)
-        new_acc_button.grid(row=0,column=0)
-        tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
-        tk.Button(self.root, text="Log Out", command=self.logout).grid(row=0,column=1)
-=======
         self.root.geometry('300x200')
         self.root.title("ADMIN")
         new_acc_button = tk.Button(self.root, text="New Account", font=('Courier New', 15), command=self.new_account_gui)
@@ -185,7 +150,7 @@ class SystemGUI:
         tk.Label(self.root, text="", width=10).grid(row=7, column=0, columnspan=3)
         logout_button = tk.Button(self.root, text="Log out", font=('Courier New', 15, "bold"), fg="red", command=self.logout)
         logout_button.grid(row=7, column=1, sticky="we")
->>>>>>> 0766615f2baf0fc13a8b849431c05b64aae6b42c
+
 
     def treasurer_gui(self):
         self.create_root()
@@ -217,6 +182,7 @@ class SystemGUI:
         self.create_root()
         self.root.geometry('300x200')
         self.root.title("LOGIN")
+        
         login_names = [acc.name for acc in self.sys.accounts]
         selected = tk.StringVar()
 
