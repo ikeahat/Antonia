@@ -23,7 +23,7 @@ class Account:
     def is_admin(self):
         return self.acc_type == "admin"
     def is_treasurer(self):
-        return self.acc_type == "admin"
+        return self.acc_type == "treasurer"
     def is_officer(self):
         return self.acc_type == "officer"
     def get_department_name(self):
@@ -87,7 +87,9 @@ class System:
             if dep.name == name:
                 return dep
     def create_directories(self):
-        os.makedirs("data/transactions")
+        path = "data/transactions"
+        if not (os.path.exists(path) and os.path.isdir(path)):
+            os.makedirs("data/transactions")
     def save_accounts(self):
         data = [[acc.name[0],
                  acc.name[1],

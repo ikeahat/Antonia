@@ -10,10 +10,11 @@ class SystemGUI:
 
         admin_account = Account(("f", "l"), "abc", "admin")
         self.sys = System("title", [admin_account], [])
-    def create_root(self):
+    def create_root(self, geometry="300x200"):
         if self.root:
             self.root.destroy()
         self.root = tk.Tk()
+        self.root.geometry(geometry)
     def clear(self):
         """Clear all widgets from tk screen"""
         for widget in self.root.winfo_children():
@@ -70,25 +71,49 @@ class SystemGUI:
         self.sys.create_account((name1, name2), password, acc_type, department)
         self.admin_gui()
 
-    def transfer_gui(self):
-        department_names = [d.name for d in self.sys.departments]
+    def try_money_operation(self, arg, amount, target=None):
+        try:
+            amount = float(amount)
+        except ValueError:
+            tk.Label(self.root, text="Operation failed.\nEnter a valid amount.").grid(column=0,row=4, columnspan=2)
+            return
+        if amount <= 0:
+            tk.Label(self.root, text="Operation failed.\nEnter an amount > 0.").grid(column=0,row=4, columnspan=2)
+            return
+        d : Department = self.account.department
+        if arg == 0:  # Deposit
+            d.deposit(amount)
+        elif arg == 1:  # Withdrawal
+            if not d.withdrawal(amount):
+                tk.Label(self.root, text="Operation failed.\nNot enough money.").grid(column=0,row=4,columnspan=2)
+                return
+        elif arg == 2:  # Transfer
+            target = self.sys.find_department(target)
+            if target == None:
+                tk.Label(self.root, text="Please select a valid department.").grid(column=0,row=4,columnspan=2)
+                return
+            if not d.transfer(target):
+                tk.Label(self.root, text="Operation failed.\nNot enough money.").grid(column=0,row=4,columnspan=2)
+                return
+        self.treasurer_gui()
+            
+
+    def money_gui(self, arg):
         self.create_root()
-        selected = tk.StringVar()
-        var_amount = tk.IntVar()
-        tk.OptionMenu(self.root, selected, *department_names).grid(column=1, row=0)
-        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
-
-    def deposit_gui(self):
-        self.create_root()
-        var_amount = tk.IntVar()
-        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
-
-    def withdraw_gui(self):
-        self.create_root()
-        var_amount = tk.IntVar()
-        tk.Entry(self.root, intvariable=var_amount).grid(column=1, row=1)
-
-
+        title = ["Deposit Money.", "Withdraw Money.", "Transfer Money."][arg]
+        tk.Label(self.root, text=title).grid(row=0,column=0)
+        
+        var_amount = tk.StringVar()
+        tk.Label(self.root, "Amount:").grid(row=1,column=0)
+        tk.Entry(self.root, textvariable=var_amount).grid(row=1,column=1)
+        if arg == 2:
+            department_names = [d.name for d in self.sys.departments]
+            department_names.append("")
+            var_department = tk.StringVar()
+            tk.OptionMenu(self.root, var_department, *department_names).grid(column=1. row=2)
+        
+        tk.Button(self.root, text="Execute").grid(row=3,column=1)
+        
     def new_account_gui(self):
         self.create_root()
         # all tk vars
@@ -126,9 +151,9 @@ class SystemGUI:
 
     def treasurer_gui(self):
         self.create_root()
-        new_transfer_button = tk.Button(self.root, text="transfer", command=self.transfer_gui)
-        new_deposit_button = tk.Button(self.root, text="deposit", command=self.deposit_gui)
-        new_withdraw_button = tk.Button(self.root, text="withdraw", command=self.withdraw_gui)
+        tk.Button(self.root, text="deposit", command=self.money_gui).grid(column=1, row=0)
+        tk.Button(self.root, text="withdraw", command=self.withdraw_gui).grid(column=1, row=1)
+        tk.Button(self.root, text="transfer", command=self.transfer_gui).grid(column=1, row=2)
         
     def login(self, account : Account):
         self.account = account
@@ -136,8 +161,10 @@ class SystemGUI:
             self.admin_gui()
         elif account.is_treasurer():
             self.treasurer_gui()
-        #elif account.is_officer():
-            #self.officer_gui()
+        elif account.is_officer():
+            self.officer_gui()
+        else:
+            print("Account error!")
 
     def try_login(self, var, password):
         acc_name = var.get()
