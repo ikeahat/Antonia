@@ -129,7 +129,6 @@ class SystemGUI:
         self.root.geometry("400x100")
         self.root.title(["Deposit Money", "Withdraw Money", "Transfer Money"][arg])
         
-
         var_amount = tk.StringVar()
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
         tk.Label(self.root, font=('Courier New', 15), text="Amount:").grid(row=1,column=0)

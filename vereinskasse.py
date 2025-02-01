@@ -25,21 +25,29 @@ class Account:
         self.password = password
         self.acc_type = acc_type
         self.department = department
+
+
     def is_admin(self):
         """
         Returns whether this account is an admin.
         """
         return self.acc_type == "admin"
+    
+
     def is_treasurer(self):
         """
         Returns whether this account is a treasurer.
         """
         return self.acc_type == "treasurer"
+    
+
     def is_officer(self):
         """
         Returns whether this account is a finance officer.
         """
         return self.acc_type == "officer"
+    
+
     def get_department_name(self):
         """
         Returns the name of this users department if the user is a
@@ -48,6 +56,7 @@ class Account:
         if self.department is None:
             return ""
         return self.department.name
+
 
 class Department:
     """
@@ -63,18 +72,24 @@ class Department:
         self.transactions = []
         self.name = name
         self.balance = balance
+
+
     def log_transaction(self, amount, text : str):
         """
         Enters a transaction of the given parameters into self.transactions.
         Also adds the current datetime into the text of the transaction.
         """
         self.transactions.append(Transaction(amount, f"{text} at {str(datetime.now())}"))
+    
+    
     def can_pay(self, amount : float) -> bool:
         """
         Returns a bool value of whether the department can afford to pay
         the amount specified in the parameter.
         """
         return self.balance - amount >= 0
+    
+    
     def withdrawal(self, amount: float):
         """
         Tries to withdraw (remove) an amount of money specified in the
@@ -86,12 +101,16 @@ class Department:
         self.balance = self.balance - amount  # Reduce balance.
         self.log_transaction(-amount, "Withdrawal")  # Log withdrawal.
         return True
+   
+   
     def deposit(self, amount: float):
         """
         Add money of amount given in parameter to the account. 
         """
         self.balance = self.balance + amount  # Add money.
         self.log_transaction(amount, "Deposit")  # Log in history.
+    
+    
     def transfer(self, amount: float, recipient):
         """
         Tries to transfer money to another club department. Returns
@@ -105,6 +124,8 @@ class Department:
         self.log_transaction(-amount, "Transfer to "+recipient.name)  # Log transaction history.
         recipient.log_transaction(amount, "Transfer from "+self.name)  # Log in recipient history.
         return True  # Return True.
+
+
 class Transaction:
     """
     A class representing a single department transaction.
@@ -116,6 +137,8 @@ class Transaction:
         """
         self.amount = amount
         self.text = text
+
+
 class System:
     """
     System class. This is where all lists of accounts, departments etc. come
@@ -128,6 +151,8 @@ class System:
         """
         self.accounts = []
         self.departments = []
+    
+    
     def load_if_exists(self):
         """
         Loads accounts and departments data if "data" folder exists.
@@ -139,6 +164,8 @@ class System:
             # If data folder doesn't exist, create default admin account.
             self.create_account(("admin", "admin"), "admin", "admin", None)
             self.save_all()  # Save new state.
+    
+    
     def load(self):
         """
         Load files of accounts, departments and transaction histories
@@ -172,12 +199,16 @@ class System:
         """
         a = Account(name, password, type, department)
         self.accounts.append(a)
+    
+    
     def create_department(self, name, balance):
         """
         Creates a new department of parameters and registers into list.
         """
         a = Department(name, balance)
         self.departments.append(a)
+    
+    
     def find_account(self, name) -> Account:
         """
         Search for account in self.accounts which has a name which equals the parameter.
@@ -186,6 +217,8 @@ class System:
         for acc in self.accounts:
             if str(acc.name) == name:
                 return acc
+    
+    
     def find_department(self, name) -> Department:
         """
         Search for department in self.departments which has a name which equals the parameter.
@@ -194,6 +227,8 @@ class System:
         for dep in self.departments:
             if dep.name == name:
                 return dep
+    
+    
     def create_directories(self):
         """
         Check for file path data/transactions and create if doesnt exist.
@@ -204,6 +239,8 @@ class System:
         if not (os.path.exists(path) and os.path.isdir(path)):
             # Make dirs if they do not already exist.
             os.makedirs("data/transactions")
+    
+    
     def save_accounts(self):
         """
         Saves all accounts data in accounts.csv.
@@ -218,6 +255,8 @@ class System:
                  acc.get_department_name()] for acc in self.accounts]
         with open("data/accounts.csv", "w", newline="") as file:
             csv.writer(file).writerows(data)  # Write data.
+    
+    
     def save_departments(self):
         """
         Save all departments data (name and current balance) in departments.csv
@@ -225,6 +264,8 @@ class System:
         data = [[dpt.name, dpt.balance] for dpt in self.departments]  # Create list of rows.
         with open("data/departments.csv", "w", newline="") as file:
             csv.writer(file).writerows(data)  # Write data.
+    
+    
     def save_departments_history(self):
         """
         Save transaction histories of all departments. Each department gets one .csv file in
@@ -234,6 +275,8 @@ class System:
             data = [[t.amount, t.text] for t in department.transactions]  # Generate rows.
             with open("data/transactions/" + department.name + ".csv", "w", newline="") as file:
                 csv.writer(file).writerows(data)  # Write data.
+    
+    
     def save_all(self):
         """
         Calls all data saving functions after calling the directory check function.
