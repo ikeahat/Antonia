@@ -171,7 +171,43 @@ class SystemGUI:
         tk.Button(self.root, text="Withdraw", command=lambda: self.money_gui(1)).grid(column=1, row=1)
         tk.Button(self.root, text="Transfer", command=lambda: self.money_gui(2)).grid(column=1, row=2)
         tk.Button(self.root, text="Log Out", command=self.logout).grid(column=2, row=0)
-        
+    
+    def summary_gui(self):
+        self.create_root()
+        tk.Label(self.root, text="Summary").grid(column=0,row=0)
+        tk.Button(self.root, text="Return",command=self.officer_gui).grid(column=1,row=0)
+        for i in range(len(self.sys.departments)):
+            d : Department = self.sys.departments[i]
+            for j in range(2):
+                tk.Label(self.root, text=(d.name, d.balance)[j]).grid(column=j, row=i+1)
+
+
+    def try_department_history_gui(self, department_name):
+        department = self.sys.find_department(department_name)
+        if department is None:
+            messagebox.showerror(message="Invalid target department.")
+            return
+        self.create_root()
+        tk.Label(self.root, text=f"Summary of {department.name}").grid(column=0,row=0)
+        tk.Button(self.root, text="Return",command=self.officer_gui).grid(column=1,row=0)
+        for i in range(len(department.transactions)):
+            t : Transaction = department.transactions[i]
+            prefix = ""
+            if t.amount > 0:
+                prefix = "+"
+            for j in range(2):
+                tk.Label(self.root, text=(prefix + str(t.amount), t.text)[j]).grid(column=j, row=i+1)
+
+    def officer_gui(self):
+        self.create_root()
+        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=1, row=0)
+        tk.Button(self.root, text="Summary", command=self.summary_gui).grid(column=0, row=0)
+        department_names = [d.name for d in self.sys.departments]
+        department_names.append("")
+        var_department_name = tk.StringVar()
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0,row=1)
+        tk.Button(self.root, text="View Department", command=lambda: self.try_department_history_gui(var_department_name.get())).grid(column=1, row=1)
+
     def login(self, account : Account):
         self.account = account
         if account.is_admin():
