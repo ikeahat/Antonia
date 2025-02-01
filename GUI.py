@@ -35,12 +35,12 @@ class SystemGUI:
 
     def try_create_department(self, name):
         if name == "":
-            tk.Label(self.root, text="Invalid input.").grid(row=0,column=2, columnspan=2)
+            messagebox.showerror(text="Please enter a valid department name.")
             return
         if self.sys.find_department(name) is not None:
-            tk.Label(self.root, text="This department already exists.").grid(row=0, column=2,columnspan=2)
+            messagebox.showerror(text="This department already exists.")
             return
-        self.sys.create_department(name, 0)
+        self.sys.create_department(name, 0.0)
         self.admin_gui()
 
 
@@ -76,10 +76,10 @@ class SystemGUI:
                 if department is None:
                     invalid = True
         if invalid:  # output invalid input message
-            tk.Label(self.root, text="Invalid input.").grid(column=0,row=6,columnspan=2)
+            messagebox.showerror(text="Invalid input.")
             return
         if self.sys.find_account((name1, name2)) is not None:
-            tk.Label(self.root, text="Account already exists.").grid(column=0, row=6, columnspan=2)
+            messagebox.showerror(text="Account already exists.")
             return
         self.sys.create_account((name1, name2), password, acc_type, department)
         self.admin_gui()
@@ -243,7 +243,7 @@ class SystemGUI:
         acc_name = var.get()
         account = self.sys.find_account(acc_name)
         if account is None or account.password != password:
-            tk.Label(self.root, text="Anmeldung fehlgeschlagen!\nVersuche es erneut.", fg="red").grid(row=3,column=0, columnspan=3)
+            messagebox.showerror(message="Login failed!\nUsername or password is wrong.")
             return
         self.login(account)
     
@@ -262,7 +262,7 @@ class SystemGUI:
 
         username_menu.configure(width=17)
 
-        tk.Label(self.root, text="VEREINSKASSEN SYSTEM", font=('Courier New', 15, "bold"), justify="left",).grid(row=0, column=0, columnspan=2)
+        tk.Label(self.root, text="VIRTUAL CLUB\nCASH REGISTER PROGRAM", font=('Courier New', 15, "bold"), justify="left",).grid(row=0, column=0, columnspan=2)
         tk.Label(self.root, text="", width=10).grid(row=1, column=0, columnspan=3)
         tk.Label(self.root, text="user:", font=('Courier New', 15), justify="left").grid(row=2,column=0)
         tk.Label(self.root, text="password:", font=('Courier New', 15), justify="left").grid(row=3, column=0)

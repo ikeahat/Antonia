@@ -55,7 +55,7 @@ class Department:
     Consists of the department name, current balance as well as
     a history of all transactions of this department.
     """
-    def __init__(self, name, balance: int):
+    def __init__(self, name, balance: float):
         """
         Basic init function. Takes a name and balance as a parameter and
         creates an empty list for transactions
@@ -63,7 +63,7 @@ class Department:
         self.transactions = []
         self.name = name
         self.balance = balance
-    def log_transaction(self, amount : int, text : str):
+    def log_transaction(self, amount : float, text : str):
         """
         Enters a transaction of the given parameters into self.transactions.
         Also adds the current datetime into the text of the transaction.
@@ -166,13 +166,13 @@ class System:
                     d.transactions.append(Transaction(float(row[0]), row[1]))
     
 
-    def create_account(self, name, password, type: int, department = None):
+    def create_account(self, name, password, type, department = None):
         """
         Creates a new account of parameters and registers into list.
         """
         a = Account(name, password, type, department)
         self.accounts.append(a)
-    def create_department(self, name, balance: int):
+    def create_department(self, name, balance: float):
         """
         Creates a new department of parameters and registers into list.
         """
