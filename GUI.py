@@ -269,19 +269,27 @@ class SystemGUI:
     
 
     def login_gui(self):
+        '''
+        login_gui(self) function initializes the first window that pops up, when the program is being started. 
+        '''
         self.create_root()
-        self.root.geometry('300x200')
-        self.root.title("LOGIN")
+        self.root.geometry('300x200')  # Size.
+        self.root.title("LOGIN")  # Title.
         
-        login_names = [acc.name for acc in self.sys.accounts]
+        login_names = [acc.name for acc in self.sys.accounts]  
+        # Collects all account names in a list, for the Drop-down menu.
         selected = tk.StringVar()
 
-        username_menu = tk.OptionMenu(self.root, selected, *login_names)
-        username_menu.grid(row=2, column=1, sticky="ew")
+        username_menu = tk.OptionMenu(self.root, selected, *login_names) 
+        # Login usernames drop down menu. You may wonder why. Simply because we can.
+        username_menu.grid(row=2, column=1, sticky="ew")  # Starts the grid.
         self.root.columnconfigure(1, minsize=120)
 
-        username_menu.configure(width=17)
+        username_menu.configure(width=17)  
+        # This is the width of the drop down menu bar so it's consistent 
+        # with the password input bar.
 
+        # All the text.
         tk.Label(self.root, text="VEREINSKASSEN SYSTEM", font=('Courier New', 15, "bold"), justify="left",).grid(row=0, column=0, columnspan=2)
         tk.Label(self.root, text="", width=10).grid(row=1, column=0, columnspan=3)
         tk.Label(self.root, text="user:", font=('Courier New', 15), justify="left").grid(row=2,column=0)
@@ -289,8 +297,12 @@ class SystemGUI:
         tk.Label(self.root, text="", width=10).grid(row=4, column=0, columnspan=3)
         
         password_var = tk.StringVar()
+        # Very professional password entry with asterisks. This makes so that the users get the 
+        # impression, that we value cyber security. In reality, no password hashing is taking 
+        # place >:) Muahahahahahah.
         password_entry = tk.Entry(self.root, show="*", textvariable=password_var)
         password_entry.grid(row=3,column=1)
+        
         x = lambda: self.try_login(selected, password_var.get())
         password_entry.bind("<Return>", lambda event: self.try_login(selected, password_var.get()))
         login_button = tk.Button(self.root, text="login", font=('Courier New', 15, "bold"), justify="left", command=x)
