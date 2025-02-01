@@ -185,13 +185,14 @@ class SystemGUI:
 
     def treasurer_gui(self):
         self.create_root()
-        self.root.geometry("350x150")
+        self.root.title("TRANSACTIONS")
+        self.root.geometry("300x180")
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
-        tk.Label(self.root, text=str(self.account.department.balance)+"$").grid(column=2, row=5)
-        tk.Button(self.root, text="Deposit", command=lambda: self.money_gui(0)).grid(column=1, row=1)
-        tk.Button(self.root, text="Withdraw", command=lambda: self.money_gui(1)).grid(column=1, row=2)
-        tk.Button(self.root, text="Transfer", command=lambda: self.money_gui(2)).grid(column=1, row=3)
-        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=0, row=5)
+        tk.Label(self.root, font=('Courier New', 15), text=f"${self.account.department.balance:.2f}").grid(column=2, row=5)
+        tk.Button(self.root, text="Deposit", font=('Courier New', 15), command=lambda: self.money_gui(0)).grid(column=0, row=1)
+        tk.Button(self.root, text="Withdraw", font=('Courier New', 15), command=lambda: self.money_gui(1)).grid(column=0, row=2)
+        tk.Button(self.root, text="Transfer", font=('Courier New', 15), command=lambda: self.money_gui(2)).grid(column=0, row=3)
+        tk.Button(self.root, text="Log Out", font=('Courier New', 15), fg="red", command=self.logout).grid(column=0, row=5)
         tk.Label(self.root, text="", width=10).grid(row=4, column=0, columnspan=3)
 
 
