@@ -236,15 +236,19 @@ class SystemGUI:
         # button to open account creation GUI
         self.root.geometry('300x200')
         self.root.title("ADMIN")
+        # Create new account button.
         new_acc_button = tk.Button(self.root, text = "New Account", font = ('Courier New', 15), command = self.new_account_gui)
         new_acc_button.grid(row = 1, column = 0, sticky = "w")
         tk.Label(self.root, text = "", width = 10).grid(row = 0, column = 0, columnspan = 3)
+        # New department creation button.
         tk.Button(self.root, text = "New Department", font = ('Courier New', 15), command = self.new_department_gui).grid(row = 2, column = 0, sticky = "w")
+        # Empty space. Because grid wont respect my rows and columns.
         tk.Label(self.root, text = "", width = 10).grid(row = 3, column = 0, columnspan = 3)
         tk.Label(self.root, text = "", width = 10).grid(row = 4, column = 0, columnspan = 3)
         tk.Label(self.root, text = "", width = 10).grid(row = 5, column = 0, columnspan = 3)
         tk.Label(self.root, text = "", width = 10).grid(row = 6, column = 0, columnspan = 3)
         tk.Label(self.root, text = "", width = 10).grid(row = 7, column = 0, columnspan = 3)
+        # Logout button.
         logout_button = tk.Button(self.root, text = "Log out", font = ('Courier New', 15, "bold"), fg = "red", command = self.logout)
         logout_button.grid(row = 7, column = 1, sticky = "we")
 
@@ -254,8 +258,10 @@ class SystemGUI:
         """
         self.create_root()
         tk.Button(self.root, text = "Log Out", command = self.logout).grid(column = 1, row = 0)
+        # Department wise summary.
         tk.Button(self.root, text = "Summary", command = self.summary_gui).grid(column = 0, row = 0)
         department_names = [d.name for d in self.sys.departments]
+        # Dep list cant be empty.
         department_names.append("")
         var_department_name = tk.StringVar()
         tk.OptionMenu(self.root, var_department_name, *department_names).grid(column = 0, row = 1)
@@ -276,6 +282,8 @@ class SystemGUI:
         tk.Button(self.root, text = "Withdraw", font = ('Courier New', 15), command = lambda: self.money_gui(1)).grid(column = 0, row = 2)
         tk.Button(self.root, text = "Transfer", font = ('Courier New', 15), command = lambda: self.money_gui(2)).grid(column = 0, row = 3)
         tk.Button(self.root, text = "Log Out", font = ('Courier New', 15), fg = "red", command = self.logout).grid(column = 0, row = 5)
+        # IYKYK :D ":.2f" wurde wieder eingeschleußt.
+        tk.Label(self.root, font = ('Courier New', 15), text=f"${self.account.department.balance:.2f}").grid(column = 2, row = 5)
         tk.Label(self.root, text = "", width = 10).grid(row = 4, column = 0, columnspan = 3)
 
 
@@ -302,10 +310,12 @@ class SystemGUI:
         one is selected.
         """
         department = self.sys.find_department(department_name)
+        # Error for bad request.
         if department is None:
             messagebox.showerror(message = "Invalid target department.")
             return
         self.create_root()
+        # Create summary for selected department.
         tk.Label(self.root, text = f"Summary of {department.name}").grid(column = 0, row = 0)
         tk.Button(self.root, text = "Return", command = self.officer_gui).grid(column = 1, row = 0)
         for i in range(len(department.transactions)):
@@ -318,10 +328,16 @@ class SystemGUI:
 
 
     def officer_gui(self):
+        '''
+        The gui that has all the functions for the finance officer.
+        '''
         self.create_root()
+        # Starts buttons.
         tk.Button(self.root, text = "Log Out", command = self.logout).grid(column = 1, row = 0)
         tk.Button(self.root, text = "Summary", command = self.summary_gui).grid(column = 0, row = 0)
+        # Department list.
         department_names = [d.name for d in self.sys.departments]
+        # In case there are no departments.
         department_names.append("")
         var_department_name = tk.StringVar()
         tk.OptionMenu(self.root, var_department_name, *department_names).grid(column = 0, row = 1)
@@ -333,6 +349,8 @@ class SystemGUI:
         Logs in as the account specified in the account parameter.
         Calls the corresponting GUI function.
         """
+
+        # Checks account type and starts whatever gui is the correct one.
         self.account = account
         if account.is_admin():
             self.admin_gui()
@@ -351,8 +369,10 @@ class SystemGUI:
         """
         acc_name = var.get()
         account = self.sys.find_account(acc_name)
+        # Outputs error for the case that the pass does not match the name.
         if account is None or account.password != password:
             messagebox.showerror(message = "Login failed!\nUsername or password is wrong.")
+            # Also pranking user becuase they can not input wrong usernames since its a drop down.
             return
         self.login(account)
     
@@ -391,6 +411,7 @@ class SystemGUI:
         # place >:) Muahahahahahah.
         password_entry = tk.Entry(self.root, show = "*", textvariable = password_var)
         password_entry.grid(row = 3, column = 1)
+        # Return key bound to do what clicking "login" does.
         password_entry.bind("<Return>", lambda event: self.try_login(selected, password_var.get()))
         tk.Button(self.root, text = "login", font = ('Courier New', 15, "bold"), justify = "left", command = lambda: self.try_login(selected, password_var.get())).grid(row = 5, column = 0, columnspan = 2)
 
