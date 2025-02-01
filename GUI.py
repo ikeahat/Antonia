@@ -101,7 +101,6 @@ class SystemGUI:
                 return
         messagebox.showinfo(message=f"Successfully {['deposited', 'withdrawn', 'transfered'][arg]} {str(amount)}$")
         self.treasurer_gui()
-            
 
     def money_gui(self, arg):
         self.create_root()
