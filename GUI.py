@@ -4,7 +4,7 @@ Virtual Club Cash Register Program GUI Module (frontend).
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox
-from vereinskasse import *
+from backend import *
 
 class SystemGUI:
     """
@@ -257,15 +257,18 @@ class SystemGUI:
         Creates the GUI for a finance officer account.
         """
         self.create_root()
-        tk.Button(self.root, text = "Log Out", command = self.logout).grid(column = 1, row = 0)
+        self.root.title("FINANCE OFFICER")
+        tk.Label(self.root, text = "", width = 10).grid(row = 0, column = 0, columnspan = 3)
+        tk.Label(self.root, text = "", width = 10).grid(row = 2, column = 0, columnspan = 3)
+        tk.Button(self.root, text = "Log Out", font = ('Courier New', 15), fg="red", command = self.logout).grid(row = 4, column = 0)
         # Department wise summary.
-        tk.Button(self.root, text = "Summary", command = self.summary_gui).grid(column = 0, row = 0)
+        tk.Button(self.root, text = "club summary", font = ('Courier New', 15), command = self.summary_gui).grid(column = 0, row = 1)
         department_names = [d.name for d in self.sys.departments]
         # Dep list cant be empty.
         department_names.append("")
         var_department_name = tk.StringVar()
-        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column = 0, row = 1)
-        tk.Button(self.root, text = "View Department", command = lambda: self.try_department_history_gui(var_department_name.get())).grid(column = 1, row = 1)
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column = 0, row = 3)
+        tk.Button(self.root, text = "View Department", font = ('Courier New', 15), command = lambda: self.try_department_history_gui(var_department_name.get())).grid(column = 1, row = 3)
 
     def treasurer_gui(self):
         """
