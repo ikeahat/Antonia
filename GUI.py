@@ -4,29 +4,40 @@ from tkinter import messagebox
 from vereinskasse import *
 
 class SystemGUI:
+    
     def __init__(self):
         self.sys = System()
         self.root = None
         self.account = None
         self.sys.load_if_exists()
+
+
     def create_root(self):
         if self.root:
             self.root.destroy()
         self.root = tk.Tk()
         self.center_window(self.root)
+
+
     def center_window(self, window, width=400, height=300):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
         window.geometry(f"{width}x{height}+{x}+{y}")
+
+
     def clear(self):
         """Clear all widgets from tk screen"""
         for widget in self.root.winfo_children():
             widget.destroy()
+
+
     def start(self):
         self.login_gui()
         self.root.mainloop()
+
+
     def logout(self):
         self.account = None
         self.login_gui()
@@ -54,7 +65,7 @@ class SystemGUI:
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
         tk.Label(self.root, text="", width=10).grid(row=1, column=0, columnspan=3)
         tk.Entry(self.root, textvariable=var_name).grid(column=1,row=1)
-        tk.Label(self.root, text="Department name:", font=('Courier New', 15),).grid(column=0,row=1)
+        tk.Label(self.root, text="Department name:", font=('Courier New', 15)).grid(column=0,row=1)
         tk.Button(self.root, text="Create Department", font=('Courier New', 15), command=lambda: self.try_create_department(var_name.get())).grid(column=1, row=2)
         tk.Button(self.root, text="Cancel", fg="red", font=('Courier New', 15), command=self.admin_gui).grid(column=0,row=2)
 
@@ -115,21 +126,23 @@ class SystemGUI:
 
     def money_gui(self, arg):
         self.create_root()
-        title = ["Deposit Money.", "Withdraw Money.", "Transfer Money."][arg]
-        tk.Label(self.root, text=title).grid(row=0,column=0)
+        self.root.geometry("400x100")
+        self.root.title(["Deposit Money", "Withdraw Money", "Transfer Money"][arg])
         
         var_amount = tk.StringVar()
-        tk.Label(self.root, text="Amount:").grid(row=1,column=0)
-        tk.Entry(self.root, textvariable=var_amount).grid(row=1,column=1)
+        tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
+        tk.Label(self.root, font=('Courier New', 15), text="Amount:").grid(row=1,column=0)
+        tk.Label(self.root, text="", width=10).grid(row=2, column=0, columnspan=3)
+        tk.Entry(self.root, font=('Courier New', 15), textvariable=var_amount).grid(row=1,column=1)
         var_department = tk.StringVar()
         if arg == 2:
             department_names = [d.name for d in self.sys.departments]
             department_names.remove(self.account.department.name)  # remove own department
             department_names.append("")
-            tk.OptionMenu(self.root, var_department, *department_names).grid(column=1, row=2)
+            tk.OptionMenu(self.root, var_department, *department_names).grid(column=3, row=1)
         
-        tk.Button(self.root, text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3,column=1)
-        tk.Button(self.root, text="Cancel", fg="red", command=self.treasurer_gui).grid(column=1, row=4)
+        tk.Button(self.root, font=('Courier New', 15), text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3,column=1)
+        tk.Button(self.root, font=('Courier New', 15), text="Cancel", fg="red", command=self.treasurer_gui).grid(column=0, row=3)
 
 
     def new_account_gui(self):
