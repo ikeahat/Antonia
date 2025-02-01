@@ -27,28 +27,28 @@ class Account:
         self.department = department
 
 
-    def is_admin(self):
+    def is_admin(self) -> bool:
         """
         Returns whether this account is an admin.
         """
         return self.acc_type == "admin"
 
 
-    def is_treasurer(self):
+    def is_treasurer(self) -> bool:
         """
         Returns whether this account is a treasurer.
         """
         return self.acc_type == "treasurer"
 
 
-    def is_officer(self):
+    def is_officer(self) -> bool:
         """
         Returns whether this account is a finance officer.
         """
         return self.acc_type == "officer"
 
 
-    def get_department_name(self):
+    def get_department_name(self) -> str:
         """
         Returns the name of this users department if the user is a
         treasurer (else it returns "").
@@ -199,11 +199,11 @@ class System:
                     d.transactions.append(Transaction(float(row[0]), row[1]))
 
 
-    def create_account(self, name, password, type, department = None):
+    def create_account(self, name, password, acc_type, department = None):
         """
         Creates a new account of parameters and registers into list.
         """
-        a = Account(name, password, type, department)
+        a = Account(name, password, acc_type, department)
         self.accounts.append(a)
     def create_department(self, name, balance: float):
         """
