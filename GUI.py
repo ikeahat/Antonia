@@ -1,93 +1,130 @@
+"""
+Virtual Club Cash Register Program GUI Module (frontend).
+"""
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox
 from vereinskasse import *
 
 class SystemGUI:
+    """
+    A class which manages the GUI in combination with the System.
+    """
     def __init__(self):
+        """
+        Init function for SystemGUI. 
+        Creates a system object and loads data if existant.
+        """
         self.sys = System()
         self.root = None
         self.account = None
         self.sys.load_if_exists()
     def create_root(self):
+        """
+        Creates a new (centered) root window and destroys the previous one.
+        """
         if self.root:
             self.root.destroy()
         self.root = tk.Tk()
-        self.center_window(self.root)
-    def center_window(self, window, width=400, height=300):
-        screen_width = window.winfo_screenwidth()
-        screen_height = window.winfo_screenheight()
+        self.center_window()
+    def center_window(self, width=400, height=300):
+        """
+        Root window is centerd on the screen.
+        """
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
-        window.geometry(f"{width}x{height}+{x}+{y}")
-    def clear(self):
-        """Clear all widgets from tk screen"""
-        for widget in self.root.winfo_children():
-            widget.destroy()
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
     def start(self):
-        self.login_gui()
+        """
+        Start up the application. Calls the login_gui method and starts
         self.root.mainloop()
+        """
+        self.login_gui()  # Login GUI is called.
+        self.root.mainloop()  # Mainloop is called.
     def logout(self):
-        self.account = None
-        self.login_gui()
-        self.sys.save_all()
+        """
+        Logs the user out and returns to the login GUI.
+        """
+        self.account = None  # Logged in account ist reset.
+        self.login_gui()  # Login GUI is called
+        self.sys.save_all()  # Save all data into file system on logout.
 
 
     def try_create_department(self, name):
-        if name == "":
-            messagebox.showerror(text="Please enter a valid department name.")
+        """
+        Try to create a department of the parameter name.
+        """
+        if name == "":  # Check whether the entered name is empty.
+            messagebox.showerror(text="Please enter a valid department name.")  # Error popup.
             return
+        # Check whether department name is already used.
         if self.sys.find_department(name) is not None:
-            messagebox.showerror(text="This department already exists.")
+            messagebox.showerror(text="This department already exists.")  # Error popup.
             return
-        self.sys.create_department(name, 0.0)
-        self.admin_gui()
+        self.sys.create_department(name, 0.0)  # Create department in system.
+        self.admin_gui()  # Return to admin view.
 
 
     def new_department_gui(self):
+        """
+        Opens the GUI for creating a new department.
+        """
         self.create_root()
         self.root.geometry("350x100")
         self.root.title("NEW DEPARTMENT")
-        # all tk vars
-        var_name = tk.StringVar()
-        # entry field:
+        var_name = tk.StringVar()  # Tk var.
+        # Place holders that keep the grid in shape.
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
         tk.Label(self.root, text="", width=10).grid(row=1, column=0, columnspan=3)
-        tk.Entry(self.root, textvariable=var_name).grid(column=1,row=1)
-        tk.Label(self.root, text="Department name:", font=('Courier New', 15),).grid(column=0,row=1)
-        tk.Button(self.root, text="Create Department", font=('Courier New', 15), command=lambda: self.try_create_department(var_name.get())).grid(column=1, row=2)
-        tk.Button(self.root, text="Cancel", fg="red", font=('Courier New', 15), command=self.admin_gui).grid(column=0,row=2)
+        tk.Entry(self.root, textvariable=var_name).grid(column=1,row=1)  # Entry field for name.
+        tk.Label(self.root, text="Department name:", font=('Courier New', 15)).grid(column=0,row=1)
+        tk.Button(self.root, text="Create Department", font=('Courier New', 15), 
+                  command=lambda: self.try_create_department(var_name.get())).grid(column=1, row=2)
+        tk.Button(self.root, text="Cancel", fg="red", font=('Courier New', 15), 
+                  command=self.admin_gui).grid(column=0,row=2)
 
 
     def try_create_account(self, name1, name2, password, acc_type, department_name):
-        # check for empty fields
+        """
+        Tries to create an account with the given parameters as data.
+        """
+        # Check whether something is left with no input.
         invalid = False
-        for s in [name1, name2, password, acc_type]:
+        for s in [name1, name2, password, acc_type]:  # All params as iterable list.
             if s == "":
                 invalid = True
                 break
         department = None
-        # check for department field if acctype is treasurer
+        # Check for department field if acctype is treasurer.
         if acc_type == "treasurer":
-            if department_name == "":
+            if department_name == "":  # Check whether department name is selected.
                 invalid = True
             else:
-                department = self.sys.find_department(department_name)
-                if department is None:
+                department = self.sys.find_department(department_name)  # Get department object.
+                if department is None:  # Check if selected department exists.
                     invalid = True
-        if invalid:  # output invalid input message
+        if invalid:  # Output invalid input message.
             messagebox.showerror(text="Invalid input.")
             return
-        if self.sys.find_account((name1, name2)) is not None:
-            messagebox.showerror(text="Account already exists.")
+        if self.sys.find_account((name1, name2)) is not None:  # Check if account already exists.
+            messagebox.showerror(text="Account already exists.")  # Error if it does exist.
             return
-        self.sys.create_account((name1, name2), password, acc_type, department)
-        self.admin_gui()
+        self.sys.create_account((name1, name2), password, acc_type, department)  # Create account.
+        self.admin_gui()  # Return to admin view
 
 
     def try_money_operation(self, arg, amount, target):
+        """
+        Try to commence a money operation. This may be a deposit, withdrawal,
+        or transfer to another club account. The parameters are:
+        arg - what kind of operation it is (0=deposit, 1=withdraw, 2=transfer)
+        amount - the amount of money
+        target - the target department in case of transfer (else may be None)
+        """
         try:
-            amount = float(amount)
+            amount = float(amount)  # Check if string is float-able.
         except ValueError:
             messagebox.showerror(message="Invalid amount.")
             return
@@ -114,6 +151,10 @@ class SystemGUI:
 
 
     def money_gui(self, arg):
+        """
+        GUI for money operations. The arg param determines which operation
+        the GUI currently handles (0=deposit, 1=withdraw, 2=transfer).
+        """
         self.create_root()
         title = ["Deposit Money.", "Withdraw Money.", "Transfer Money."][arg]
         tk.Label(self.root, text=title).grid(row=0,column=0)
@@ -133,6 +174,10 @@ class SystemGUI:
 
 
     def new_account_gui(self):
+        """
+        Creates the GUI for entering the data of a new account
+        (account creation GUI).
+        """
         self.create_root()
         self.root.geometry("350x250")
         self.root.title("CREATE ACCOUNT")
@@ -166,6 +211,10 @@ class SystemGUI:
 
 
     def admin_gui(self):
+        """
+        Opens the Admin GUI, containing the buttons leading to the admin
+        menus (account and department creation) as well as a log out button.
+        """
         self.create_root()
         # button to open account creation GUI
         self.root.geometry('300x200')
@@ -182,8 +231,25 @@ class SystemGUI:
         logout_button = tk.Button(self.root, text="Log out", font=('Courier New', 15, "bold"), fg="red", command=self.logout)
         logout_button.grid(row=7, column=1, sticky="we")
 
+    def officer_gui(self):
+        """
+        Creates the GUI for a finance officer account.
+        """
+        self.create_root()
+        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=1, row=0)
+        tk.Button(self.root, text="Summary", command=self.summary_gui).grid(column=0, row=0)
+        department_names = [d.name for d in self.sys.departments]
+        department_names.append("")
+        var_department_name = tk.StringVar()
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0,row=1)
+        tk.Button(self.root, text="View Department", command=lambda: self.try_department_history_gui(var_department_name.get())).grid(column=1, row=1)
 
     def treasurer_gui(self):
+        """
+        Opens the Treasurer GUI containing the options of a treasurer account.
+        Contains buttons for all 3 money operations of the accounts department
+        and a log-out button.
+        """
         self.create_root()
         tk.Label(self.root, text=str(self.account.department.balance)+"$").grid(column=2, row=1)
         tk.Button(self.root, text="Deposit", command=lambda: self.money_gui(0)).grid(column=1, row=0)
@@ -192,16 +258,26 @@ class SystemGUI:
         tk.Button(self.root, text="Log Out", command=self.logout).grid(column=2, row=0)
     
     def summary_gui(self):
+        """
+        Opens a GUI which lists all departments along with their current 
+        balance.
+        """
         self.create_root()
-        tk.Label(self.root, text="Summary").grid(column=0,row=0)
         tk.Button(self.root, text="Return",command=self.officer_gui).grid(column=1,row=0)
+        tk.Label(self.root, text="Summary").grid(column=0,row=0)
+        tk.Label(self.root, text="Total").grid(column=0,row=1)
+        tk.Label(self.root, text=f"${self.sys.get_total_balance():.2f}").grid(column=1,row=1)
         for i in range(len(self.sys.departments)):
             d : Department = self.sys.departments[i]
             for j in range(2):
-                tk.Label(self.root, text=(d.name, d.balance)[j]).grid(column=j, row=i+1)
+                tk.Label(self.root, text=(d.name, d.balance)[j]).grid(column=j, row=i+2)
 
 
     def try_department_history_gui(self, department_name):
+        """
+        Tries to show the transaction history of a selected department, if
+        one is selected.
+        """
         department = self.sys.find_department(department_name)
         if department is None:
             messagebox.showerror(message="Invalid target department.")
@@ -217,17 +293,12 @@ class SystemGUI:
             for j in range(2):
                 tk.Label(self.root, text=(prefix + str(t.amount), t.text)[j]).grid(column=j, row=i+1)
 
-    def officer_gui(self):
-        self.create_root()
-        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=1, row=0)
-        tk.Button(self.root, text="Summary", command=self.summary_gui).grid(column=0, row=0)
-        department_names = [d.name for d in self.sys.departments]
-        department_names.append("")
-        var_department_name = tk.StringVar()
-        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0,row=1)
-        tk.Button(self.root, text="View Department", command=lambda: self.try_department_history_gui(var_department_name.get())).grid(column=1, row=1)
-
+    
     def login(self, account : Account):
+        """
+        Logs in as the account specified in the account parameter.
+        Calls the corresponting GUI function.
+        """
         self.account = account
         if account.is_admin():
             self.admin_gui()
@@ -240,6 +311,10 @@ class SystemGUI:
 
 
     def try_login(self, var, password):
+        """
+        Tries to login using the user name and password currently entered
+        in the login GUI.
+        """
         acc_name = var.get()
         account = self.sys.find_account(acc_name)
         if account is None or account.password != password:
@@ -271,10 +346,8 @@ class SystemGUI:
         password_var = tk.StringVar()
         password_entry = tk.Entry(self.root, show="*", textvariable=password_var)
         password_entry.grid(row=3,column=1)
-        x = lambda: self.try_login(selected, password_var.get())
         password_entry.bind("<Return>", lambda event: self.try_login(selected, password_var.get()))
-        login_button = tk.Button(self.root, text="login", font=('Courier New', 15, "bold"), justify="left", command=x)
-        login_button.grid(row=5,column=0, columnspan=2)
+        tk.Button(self.root, text="login", font=('Courier New', 15, "bold"), justify="left", command=lambda: self.try_login(selected, password_var.get())).grid(row=5,column=0, columnspan=2)
 
 
 if __name__ == "__main__":

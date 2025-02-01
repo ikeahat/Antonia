@@ -128,6 +128,16 @@ class System:
         """
         self.accounts = []
         self.departments = []
+    
+    def get_total_balance(self):
+        """
+        Returns the total combined balance of all club departments.
+        """
+        total = 0
+        for department in self.departments:
+            total += department.balance
+        return total
+
     def load_if_exists(self):
         """
         Loads accounts and departments data if "data" folder exists.
