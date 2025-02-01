@@ -1,15 +1,15 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import messagebox
 from vereinskasse import *
 
 
 class SystemGUI:
     def __init__(self):
-        self.sys = System("title", [], [])
+        self.sys = System()
         self.root = None
-
-        admin_account = Account(("f", "l"), "abc", "admin")
-        self.sys = System("title", [admin_account], [])
+        self.account = None
+        self.sys.load_if_exists()
     def create_root(self, geometry="300x200"):
         if self.root:
             self.root.destroy()
@@ -71,30 +71,31 @@ class SystemGUI:
         self.sys.create_account((name1, name2), password, acc_type, department)
         self.admin_gui()
 
-    def try_money_operation(self, arg, amount, target=None):
+    def try_money_operation(self, arg, amount, target):
         try:
             amount = float(amount)
         except ValueError:
-            tk.Label(self.root, text="Operation failed.\nEnter a valid amount.").grid(column=0,row=4, columnspan=2)
+            messagebox.showerror(message="Invalid amount.")
             return
         if amount <= 0:
-            tk.Label(self.root, text="Operation failed.\nEnter an amount > 0.").grid(column=0,row=4, columnspan=2)
+            messagebox.showerror(message="Amount must be greater than 0.")
             return
         d : Department = self.account.department
         if arg == 0:  # Deposit
             d.deposit(amount)
         elif arg == 1:  # Withdrawal
             if not d.withdrawal(amount):
-                tk.Label(self.root, text="Operation failed.\nNot enough money.").grid(column=0,row=4,columnspan=2)
+                messagebox.showerror(message="Not enough money.")
                 return
         elif arg == 2:  # Transfer
             target = self.sys.find_department(target)
             if target == None:
-                tk.Label(self.root, text="Please select a valid department.").grid(column=0,row=4,columnspan=2)
+                messagebox.showerror(message="Invalid target department.")
                 return
-            if not d.transfer(target):
-                tk.Label(self.root, text="Operation failed.\nNot enough money.").grid(column=0,row=4,columnspan=2)
+            if not d.transfer(amount, target):
+                messagebox.showerror(message="Not enough money.")
                 return
+        messagebox.showinfo(message=f"Successfully {['deposited', 'withdrawn', 'transfered'][arg]} {str(amount)}$")
         self.treasurer_gui()
             
 
@@ -104,16 +105,18 @@ class SystemGUI:
         tk.Label(self.root, text=title).grid(row=0,column=0)
         
         var_amount = tk.StringVar()
-        tk.Label(self.root, "Amount:").grid(row=1,column=0)
+        tk.Label(self.root, text="Amount:").grid(row=1,column=0)
         tk.Entry(self.root, textvariable=var_amount).grid(row=1,column=1)
+        var_department = tk.StringVar()
         if arg == 2:
             department_names = [d.name for d in self.sys.departments]
+            department_names.remove(self.account.department.name)  # remove own department
             department_names.append("")
-            var_department = tk.StringVar()
-            tk.OptionMenu(self.root, var_department, *department_names).grid(column=1. row=2)
+            tk.OptionMenu(self.root, var_department, *department_names).grid(column=1, row=2)
         
-        tk.Button(self.root, text="Execute").grid(row=3,column=1)
-        
+        tk.Button(self.root, text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3,column=1)
+        tk.Button(self.root, text="Cancel", command=self.treasurer_gui).grid(column=1, row=4)
+
     def new_account_gui(self):
         self.create_root()
         # all tk vars
@@ -147,13 +150,15 @@ class SystemGUI:
         new_acc_button = tk.Button(self.root, text="New Account", command=self.new_account_gui)
         new_acc_button.grid(row=0,column=0)
         tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
-        tk.Button(self.root, text="Log out", command=self.logout).grid(row=0,column=1)
+        tk.Button(self.root, text="Log Out", command=self.logout).grid(row=0,column=1)
 
     def treasurer_gui(self):
         self.create_root()
-        tk.Button(self.root, text="deposit", command=self.money_gui).grid(column=1, row=0)
-        tk.Button(self.root, text="withdraw", command=self.withdraw_gui).grid(column=1, row=1)
-        tk.Button(self.root, text="transfer", command=self.transfer_gui).grid(column=1, row=2)
+        tk.Label(self.root, text=str(self.account.department.balance)+"$").grid(column=2, row=1)
+        tk.Button(self.root, text="Deposit", command=lambda: self.money_gui(0)).grid(column=1, row=0)
+        tk.Button(self.root, text="Withdraw", command=lambda: self.money_gui(1)).grid(column=1, row=1)
+        tk.Button(self.root, text="Transfer", command=lambda: self.money_gui(2)).grid(column=1, row=2)
+        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=2, row=0)
         
     def login(self, account : Account):
         self.account = account
@@ -192,18 +197,6 @@ class SystemGUI:
         login_button = tk.Button(self.root, text="login", command=x)
         login_button.grid(row=2,column=0,columnspan=2)
 
-
-'''b0 = ttk.Button(root, text = "transfer", command = Department.transfer)
-b0.pack()
-b1 = ttk.Button(root, text = "Doch", command = hallo)
-b1.pack()
-b2 = tk.Button(root, text="Nein", command = root.destroy)
-b2.pack()'''
-
-'''gui = SystemGUI()
-gui.sys.create_account(("admin", "admin"), "hiabc", 0)
-gui.login_gui()
-gui.start()'''
 
 if __name__ == "__main__":
     gui = SystemGUI()

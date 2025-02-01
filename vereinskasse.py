@@ -68,10 +68,35 @@ class Transaction:
             output_string = "+" + output_string
         return output_string
 class System:
-    def __init__(self, title, accounts: list, departments: list):
-        self.title = title
-        self.accounts = accounts
-        self.departments = departments
+    def __init__(self):
+        self.accounts = []
+        self.departments = []
+    def load_if_exists(self):
+        if os.path.isdir("data"):
+            self.load()
+        else:
+            self.create_account(("admin", "admin"), "admin", "admin", None)
+            self.save_all()
+    def load(self):
+        # departments
+        with open("data/departments.csv", newline="") as file:
+            for row in csv.reader(file):
+                department = Department(row[0], float(row[1]))
+                self.departments.append(department)
+        # accounts
+        with open("data/accounts.csv", newline="") as file:
+            for row in csv.reader(file):
+                account = Account((row[0], row[1]), row[2], row[3], self.find_department(row[4]))
+                self.accounts.append(account)
+        # transaction histories
+        for filename in os.listdir("data/transactions/"):
+            d = self.find_department(filename.removesuffix(".csv"))
+            print(filename.removesuffix(".csv"))
+            if d is None:
+                continue
+            with open("data/transactions/"+filename, newline="") as file:
+                for row in csv.reader(file):
+                    d.transactions.append(Transaction(float(row[0]), row[1]))
     def create_account(self, name, password, type: int, department = None):
         a = Account(name, password, type, department)
         self.accounts.append(a)
