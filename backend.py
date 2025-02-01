@@ -72,6 +72,8 @@ class Department:
         self.transactions = []
         self.name = name
         self.balance = balance
+
+
     def log_transaction(self, amount : float, text : str):
         """
         Enters a transaction of the given parameters into self.transactions.
@@ -150,6 +152,7 @@ class System:
         self.accounts = []
         self.departments = []
 
+
     def get_total_balance(self):
         """
         Returns the total combined balance of all club departments.
@@ -158,6 +161,7 @@ class System:
         for department in self.departments:
             total += department.balance
         return total
+
 
     def load_if_exists(self):
         """
