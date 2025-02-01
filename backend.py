@@ -17,7 +17,7 @@ class Account:
     Consists of first and last name (tuple of str), password (str),
     account type (str) and department (Department)
     """
-    def __init__(self, name, password, acc_type, department=None):
+    def __init__(self, name, password, acc_type, department = None):
         """
         Init method of Account. Puts parameters into class attributes.
         """
@@ -27,28 +27,28 @@ class Account:
         self.department = department
 
 
-    def is_admin(self):
+    def is_admin(self) -> bool:
         """
         Returns whether this account is an admin.
         """
         return self.acc_type == "admin"
-    
 
-    def is_treasurer(self):
+
+    def is_treasurer(self) -> bool:
         """
         Returns whether this account is a treasurer.
         """
         return self.acc_type == "treasurer"
-    
 
-    def is_officer(self):
+
+    def is_officer(self) -> bool:
         """
         Returns whether this account is a finance officer.
         """
         return self.acc_type == "officer"
-    
 
-    def get_department_name(self):
+
+    def get_department_name(self) -> str:
         """
         Returns the name of this users department if the user is a
         treasurer (else it returns "").
@@ -78,16 +78,16 @@ class Department:
         Also adds the current datetime into the text of the transaction.
         """
         self.transactions.append(Transaction(amount, f"{text} at {str(datetime.now())}"))
-    
-    
+
+
     def can_pay(self, amount : float) -> bool:
         """
         Returns a bool value of whether the department can afford to pay
         the amount specified in the parameter.
         """
         return self.balance - amount >= 0
-    
-    
+
+
     def withdrawal(self, amount: float):
         """
         Tries to withdraw (remove) an amount of money specified in the
@@ -99,16 +99,16 @@ class Department:
         self.balance = self.balance - amount  # Reduce balance.
         self.log_transaction(-amount, "Withdrawal")  # Log withdrawal.
         return True
-   
-   
+
+
     def deposit(self, amount: float):
         """
-        Add money of amount given in parameter to the account. 
+        Add money of amount given in parameter to the account.
         """
         self.balance = self.balance + amount  # Add money.
         self.log_transaction(amount, "Deposit")  # Log in history.
-    
-    
+
+
     def transfer(self, amount: float, recipient):
         """
         Tries to transfer money to another club department. Returns
@@ -149,7 +149,7 @@ class System:
         """
         self.accounts = []
         self.departments = []
-    
+
     def get_total_balance(self):
         """
         Returns the total combined balance of all club departments.
@@ -170,20 +170,20 @@ class System:
             # If data folder doesn't exist, create default admin account.
             self.create_account(("admin", "admin"), "admin", "admin", None)
             self.save_all()  # Save new state.
-    
-    
+
+
     def load(self):
         """
         Load files of accounts, departments and transaction histories
         and put into respective class attributes.
         """
         # Load departments.
-        with open("data/departments.csv", newline="") as file:
+        with open("data/departments.csv", newline = "") as file:
             for row in csv.reader(file):
                 department = Department(row[0], float(row[1]))
                 self.departments.append(department)
         # Load accounts.
-        with open("data/accounts.csv", newline="") as file:
+        with open("data/accounts.csv", newline = "") as file:
             for row in csv.reader(file):
                 account = Account((row[0], row[1]), row[2], row[3], self.find_department(row[4]))
                 self.accounts.append(account)
@@ -194,16 +194,16 @@ class System:
             if d is None:  # In case there is data of a non existent department.
                 continue  # Skip this element.
             # Read csv file of this departments transaction history.
-            with open("data/transactions/"+filename, newline="") as file:
+            with open("data/transactions/"+filename, newline = "") as file:
                 for row in csv.reader(file):  # csv is structured amount,text
                     d.transactions.append(Transaction(float(row[0]), row[1]))
-    
 
-    def create_account(self, name, password, type, department = None):
+
+    def create_account(self, name, password, acc_type, department = None):
         """
         Creates a new account of parameters and registers into list.
         """
-        a = Account(name, password, type, department)
+        a = Account(name, password, acc_type, department)
         self.accounts.append(a)
     def create_department(self, name, balance: float):
         """
@@ -211,28 +211,29 @@ class System:
         """
         a = Department(name, balance)
         self.departments.append(a)
-    
-    
+
+
     def find_account(self, name) -> Account:
         """
-        Search for account in self.accounts which has a name which equals the parameter.
-        Return Account if there is one, else return None.
+        Search for account in self.accounts which has a name which equals the
+        parameter. Return Account if there is one, else return None.
         """
         for acc in self.accounts:
             if str(acc.name) == name:
                 return acc
-    
-    
+
+
     def find_department(self, name) -> Department:
         """
-        Search for department in self.departments which has a name which equals the parameter.
-        Return Department if there is one, else return None.
+        Search for department in self.departments which has a name which
+        equals the parameter. Return Department if there is one,
+        else return None.
         """
         for dep in self.departments:
             if dep.name == name:
                 return dep
-    
-    
+
+
     def create_directories(self):
         """
         Check for file path data/transactions and create if doesnt exist.
@@ -243,8 +244,8 @@ class System:
         if not (os.path.exists(path) and os.path.isdir(path)):
             # Make dirs if they do not already exist.
             os.makedirs("data/transactions")
-    
-    
+
+
     def save_accounts(self):
         """
         Saves all accounts data in accounts.csv.
@@ -257,30 +258,32 @@ class System:
                  acc.password,
                  acc.acc_type,
                  acc.get_department_name()] for acc in self.accounts]
-        with open("data/accounts.csv", "w", newline="") as file:
+        with open("data/accounts.csv", "w", newline = "") as file:
             csv.writer(file).writerows(data)  # Write data.
-    
-    
+
+
     def save_departments(self):
         """
-        Save all departments data (name and current balance) in departments.csv
+        Save all departments data (name and current balance)
+        in departments.csv.
         """
         data = [[dpt.name, dpt.balance] for dpt in self.departments]  # Create list of rows.
-        with open("data/departments.csv", "w", newline="") as file:
+        with open("data/departments.csv", "w", newline = "") as file:
             csv.writer(file).writerows(data)  # Write data.
-    
-    
+
+
     def save_departments_history(self):
         """
-        Save transaction histories of all departments. Each department gets one .csv file in
-        data/transactions named after the department name (+".csv").
+        Save transaction histories of all departments. Each department gets
+        one .csv file in data/transactions named after the department name
+        (+".csv").
         """
         for department in self.departments:  # Loop through each department.
             data = [[t.amount, t.text] for t in department.transactions]  # Generate rows.
-            with open("data/transactions/" + department.name + ".csv", "w", newline="") as file:
+            with open("data/transactions/" + department.name + ".csv", "w", newline = "") as file:
                 csv.writer(file).writerows(data)  # Write data.
-    
-    
+
+
     def save_all(self):
         """
         Calls all data saving functions after calling the directory check function.
