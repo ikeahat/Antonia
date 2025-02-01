@@ -80,12 +80,12 @@ class SystemGUI:
         # Place holders that keep the grid in shape.
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
         tk.Label(self.root, text="", width=10).grid(row=1, column=0, columnspan=3)
-        tk.Entry(self.root, textvariable=var_name).grid(column=1,row=1)  # Entry field for name.
-        tk.Label(self.root, text="Department name:", font=('Courier New', 15)).grid(column=0,row=1)
+        tk.Entry(self.root, textvariable=var_name).grid(column=1, row=1)  # Entry field for name.
+        tk.Label(self.root, text="Department name:", font=('Courier New', 15)).grid(column=0, row=1)
         tk.Button(self.root, text="Create Department", font=('Courier New', 15), 
                   command=lambda: self.try_create_department(var_name.get())).grid(column=1, row=2)
         tk.Button(self.root, text="Cancel", fg="red", font=('Courier New', 15), 
-                  command=self.admin_gui).grid(column=0,row=2)
+                  command=self.admin_gui).grid(column=0, row=2)
 
 
     def try_create_account(self, name1, name2, password, acc_type, department_name):
@@ -130,26 +130,27 @@ class SystemGUI:
         except ValueError:
             messagebox.showerror(message="Invalid amount.")
             return
-        if amount <= 0:
+        if amount <= 0:  # Prevent money operations of <=0$
             messagebox.showerror(message="Amount must be greater than 0.")
             return
         d : Department = self.account.department
         if arg == 0:  # Deposit
             d.deposit(amount)
         elif arg == 1:  # Withdrawal
-            if not d.withdrawal(amount):
+            if not d.withdrawal(amount):  # Check if enough money is present
                 messagebox.showerror(message="Not enough money.")
                 return
         elif arg == 2:  # Transfer
             target = self.sys.find_department(target)
-            if target == None:
+            if target == None:  # Check if target department exists
                 messagebox.showerror(message="Invalid target department.")
                 return
-            if not d.transfer(amount, target):
+            if not d.transfer(amount, target):  # Check if money is present
                 messagebox.showerror(message="Not enough money.")
                 return
-        messagebox.showinfo(message=f"Successfully {['deposited', 'withdrawn', 'transfered'][arg]} {str(amount)}$")
-        self.treasurer_gui()
+        messagebox.showinfo(
+            message=f"Successfully {['deposited', 'withdrawn', 'transfered'][arg]} {str(amount)}$")
+        self.treasurer_gui()  # Return to treasurer GUI.
 
 
     def money_gui(self, arg):
@@ -159,21 +160,23 @@ class SystemGUI:
         """
         self.create_root()
         self.root.geometry("400x100")
+        # Title of current operation.
         self.root.title(["Deposit Money", "Withdraw Money", "Transfer Money"][arg])
         
-        var_amount = tk.StringVar()
+        var_amount = tk.StringVar()  # Tk variable for Entry widget
+        # Amount Entry widget.
+        tk.Label(self.root, font=('Courier New', 15), text="Amount:").grid(row=1, column=0)
+        tk.Label(self.root, text="", width=10).grid(row=2, column=0, columnspan=3)  # placeholder
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
-        tk.Label(self.root, font=('Courier New', 15), text="Amount:").grid(row=1,column=0)
-        tk.Label(self.root, text="", width=10).grid(row=2, column=0, columnspan=3)
-        tk.Entry(self.root, font=('Courier New', 15), textvariable=var_amount).grid(row=1,column=1)
-        var_department = tk.StringVar()
-        if arg == 2:
+        tk.Entry(self.root, font=('Courier New', 15), textvariable=var_amount).grid(row=1, column=1)
+        var_department = tk.StringVar()  # TK variable for department selection.
+        if arg == 2:  # Only add department selector if operation is transaction.
             department_names = [d.name for d in self.sys.departments]
-            department_names.remove(self.account.department.name)  # remove own department
+            department_names.remove(self.account.department.name)  # Remove own department.
             department_names.append("")
             tk.OptionMenu(self.root, var_department, *department_names).grid(column=3, row=1)
-        
-        tk.Button(self.root, font=('Courier New', 15), text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3,column=1)
+        # Buttons for executing or cancelling operation.
+        tk.Button(self.root, font=('Courier New', 15), text="Execute", command = lambda: self.try_money_operation(arg, var_amount.get(), var_department.get())).grid(row=3, column=1)
         tk.Button(self.root, font=('Courier New', 15), text="Cancel", fg="red", command=self.treasurer_gui).grid(column=0, row=3)
 
 
@@ -186,29 +189,37 @@ class SystemGUI:
         self.root.geometry("350x250")
         self.root.title("CREATE ACCOUNT")
         
-        # all tk vars
+        # All tk vars for user entries.
         var_name1 = tk.StringVar()
         var_name2 = tk.StringVar()
         var_password = tk.StringVar()
         var_account_type = tk.StringVar()
         var_department_name = tk.StringVar()
-        # tk entry fields
 
-        tk.Label(self.root, text="", width=10).grid(row=2, column=0, columnspan=3)
+        # Tk entry fields.
         tk.Entry(self.root, textvariable=var_name1).grid(column=1, row=3)
         tk.Entry(self.root, textvariable=var_name2).grid(column=1, row=4)
         tk.Entry(self.root, textvariable=var_password, show="*").grid(column=1, row=5)
+        tk.Label(self.root, text="", width=10).grid(row=2, column=0, columnspan=3)
 
-        account_types = ["admin", "treasurer", "officer"]
-        department_names = [d.name for d in self.sys.departments]
-        department_names.append("")
+        # Option Menu Options lists.
+        account_types = ["admin", "treasurer", "officer"]  # List of all account types.
+        department_names = [d.name for d in self.sys.departments]  # List of all dpt names.
+        department_names.append("")  # Append "" so list can never be completely empty.
+        var_account_type.set(account_types[0])  # set default value for account type.
 
-        var_account_type.set(account_types[0])
-        tk.OptionMenu(self.root, var_account_type, *account_types).grid(column=1,row=6, sticky="ew")
+        tk.OptionMenu(self.root, var_account_type, *account_types).grid(column=1, row=6, 
+                                                                        sticky="ew")
         self.root.columnconfigure(1, minsize=120)
         for i in range(5):
-            tk.Label(self.root, font=('Courier New', 15), text=(["First Name", "Last Name", "Password", "Account Type", "Department\n(for treasurers)"][i])).grid(column=0, row=i+3)
-        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=1,row=7, sticky="ew")
+            # Loop to create all labels.
+            tk.Label(self.root, font=('Courier New', 15), 
+                     text=(["First Name", "Last Name", "Password", 
+                            "Account Type", 
+                            "Department\n(for treasurers)"][i])).grid(column=0, row=i+3)
+        # OptionMenu for department name selection.
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=1, row=7, 
+                                                                              sticky="ew")
         
         tk.Button(self.root, text="Create Account", font=('Courier New', 15), command=lambda: self.try_create_account(var_name1.get(), var_name2.get(), var_password.get(), var_account_type.get(), var_department_name.get())).grid(column=1, row=8)
         tk.Button(self.root, text="Cancel", font=('Courier New', 15), fg="red", command=self.admin_gui).grid(column=0, row=8)
@@ -224,9 +235,9 @@ class SystemGUI:
         self.root.geometry('300x200')
         self.root.title("ADMIN")
         new_acc_button = tk.Button(self.root, text="New Account", font=('Courier New', 15), command=self.new_account_gui)
-        new_acc_button.grid(row=1,column=0, sticky="w")
+        new_acc_button.grid(row=1, column=0, sticky="w")
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
-        tk.Button(self.root, text="New Department", font=('Courier New', 15), command=self.new_department_gui).grid(row=2,column=0, sticky="w")
+        tk.Button(self.root, text="New Department", font=('Courier New', 15), command=self.new_department_gui).grid(row=2, column=0, sticky="w")
         tk.Label(self.root, text="", width=10).grid(row=3, column=0, columnspan=3)
         tk.Label(self.root, text="", width=10).grid(row=4, column=0, columnspan=3)
         tk.Label(self.root, text="", width=10).grid(row=5, column=0, columnspan=3)
@@ -245,7 +256,7 @@ class SystemGUI:
         department_names = [d.name for d in self.sys.departments]
         department_names.append("")
         var_department_name = tk.StringVar()
-        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0,row=1)
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0, row=1)
         tk.Button(self.root, text="View Department", command=lambda: self.try_department_history_gui(var_department_name.get())).grid(column=1, row=1)
 
     def treasurer_gui(self):
@@ -272,10 +283,10 @@ class SystemGUI:
         balance.
         """
         self.create_root()
-        tk.Button(self.root, text="Return",command=self.officer_gui).grid(column=1,row=0)
-        tk.Label(self.root, text="Summary").grid(column=0,row=0)
-        tk.Label(self.root, text="Total").grid(column=0,row=1)
-        tk.Label(self.root, text=f"${self.sys.get_total_balance():.2f}").grid(column=1,row=1)
+        tk.Button(self.root, text="Return", command=self.officer_gui).grid(column=1, row=0)
+        tk.Label(self.root, text="Summary").grid(column=0, row=0)
+        tk.Label(self.root, text="Total").grid(column=0, row=1)
+        tk.Label(self.root, text=f"${self.sys.get_total_balance():.2f}").grid(column=1, row=1)
         for i in range(len(self.sys.departments)):
             d : Department = self.sys.departments[i]
             for j in range(2):
@@ -292,8 +303,8 @@ class SystemGUI:
             messagebox.showerror(message="Invalid target department.")
             return
         self.create_root()
-        tk.Label(self.root, text=f"Summary of {department.name}").grid(column=0,row=0)
-        tk.Button(self.root, text="Return",command=self.officer_gui).grid(column=1,row=0)
+        tk.Label(self.root, text=f"Summary of {department.name}").grid(column=0, row=0)
+        tk.Button(self.root, text="Return", command=self.officer_gui).grid(column=1, row=0)
         for i in range(len(department.transactions)):
             t : Transaction = department.transactions[i]
             prefix = ""
@@ -310,7 +321,7 @@ class SystemGUI:
         department_names = [d.name for d in self.sys.departments]
         department_names.append("")
         var_department_name = tk.StringVar()
-        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0,row=1)
+        tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0, row=1)
         tk.Button(self.root, text="View Department", command=lambda: self.try_department_history_gui(var_department_name.get())).grid(column=1, row=1)
 
 
@@ -365,9 +376,9 @@ class SystemGUI:
         # with the password input bar.
         
         # All the text.
-        tk.Label(self.root, text="VIRTUAL CLUB\nCASH REGISTER PROGRAM", font=('Courier New', 15, "bold"), justify="left",).grid(row=0, column=0, columnspan=2)
+        tk.Label(self.root, text="VIRTUAL CLUB\nCASH REGISTER PROGRAM", font=('Courier New', 15, "bold"), justify="left").grid(row=0, column=0, columnspan=2)
         tk.Label(self.root, text="", width=10).grid(row=1, column=0, columnspan=3)
-        tk.Label(self.root, text="user:", font=('Courier New', 15), justify="left").grid(row=2,column=0)
+        tk.Label(self.root, text="user:", font=('Courier New', 15), justify="left").grid(row=2, column=0)
         tk.Label(self.root, text="password:", font=('Courier New', 15), justify="left").grid(row=3, column=0)
         tk.Label(self.root, text="", width=10).grid(row=4, column=0, columnspan=3)
         
@@ -376,9 +387,9 @@ class SystemGUI:
         # impression, that we value cyber security. In reality, no password hashing is taking 
         # place >:) Muahahahahahah.
         password_entry = tk.Entry(self.root, show="*", textvariable=password_var)
-        password_entry.grid(row=3,column=1)
+        password_entry.grid(row=3, column=1)
         password_entry.bind("<Return>", lambda event: self.try_login(selected, password_var.get()))
-        tk.Button(self.root, text="login", font=('Courier New', 15, "bold"), justify="left", command=lambda: self.try_login(selected, password_var.get())).grid(row=5,column=0, columnspan=2)
+        tk.Button(self.root, text="login", font=('Courier New', 15, "bold"), justify="left", command=lambda: self.try_login(selected, password_var.get())).grid(row=5, column=0, columnspan=2)
 
 
 if __name__ == "__main__":
