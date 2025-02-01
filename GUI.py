@@ -185,12 +185,16 @@ class SystemGUI:
 
     def treasurer_gui(self):
         self.create_root()
-        tk.Label(self.root, text=str(self.account.department.balance)+"$").grid(column=2, row=1)
-        tk.Button(self.root, text="Deposit", command=lambda: self.money_gui(0)).grid(column=1, row=0)
-        tk.Button(self.root, text="Withdraw", command=lambda: self.money_gui(1)).grid(column=1, row=1)
-        tk.Button(self.root, text="Transfer", command=lambda: self.money_gui(2)).grid(column=1, row=2)
-        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=2, row=0)
-    
+        self.root.geometry("350x150")
+        tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
+        tk.Label(self.root, text=str(self.account.department.balance)+"$").grid(column=2, row=5)
+        tk.Button(self.root, text="Deposit", command=lambda: self.money_gui(0)).grid(column=1, row=1)
+        tk.Button(self.root, text="Withdraw", command=lambda: self.money_gui(1)).grid(column=1, row=2)
+        tk.Button(self.root, text="Transfer", command=lambda: self.money_gui(2)).grid(column=1, row=3)
+        tk.Button(self.root, text="Log Out", command=self.logout).grid(column=0, row=5)
+        tk.Label(self.root, text="", width=10).grid(row=4, column=0, columnspan=3)
+
+
     def summary_gui(self):
         self.create_root()
         tk.Label(self.root, text="Summary").grid(column=0,row=0)
