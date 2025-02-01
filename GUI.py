@@ -129,6 +129,7 @@ class SystemGUI:
         self.root.geometry("400x100")
         self.root.title(["Deposit Money", "Withdraw Money", "Transfer Money"][arg])
         
+
         var_amount = tk.StringVar()
         tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
         tk.Label(self.root, font=('Courier New', 15), text="Amount:").grid(row=1,column=0)
@@ -235,6 +236,7 @@ class SystemGUI:
             for j in range(2):
                 tk.Label(self.root, text=(prefix + str(t.amount), t.text)[j]).grid(column=j, row=i+1)
 
+
     def officer_gui(self):
         self.create_root()
         tk.Button(self.root, text="Log Out", command=self.logout).grid(column=1, row=0)
@@ -244,6 +246,7 @@ class SystemGUI:
         var_department_name = tk.StringVar()
         tk.OptionMenu(self.root, var_department_name, *department_names).grid(column=0,row=1)
         tk.Button(self.root, text="View Department", command=lambda: self.try_department_history_gui(var_department_name.get())).grid(column=1, row=1)
+
 
     def login(self, account : Account):
         self.account = account
