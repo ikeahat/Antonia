@@ -14,7 +14,6 @@ class SystemGUI:
             self.root.destroy()
         self.root = tk.Tk()
         self.center_window(self.root)
-        self.root.geometry('300x200')
     def center_window(self, window, width=400, height=300):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
@@ -123,10 +122,19 @@ class SystemGUI:
     def admin_gui(self):
         self.create_root()
         # button to open account creation GUI
-        new_acc_button = tk.Button(self.root, text="New Account", command=self.new_account_gui)
-        new_acc_button.grid(row=0,column=0)
-        tk.Button(self.root, text="New Department", command=self.new_department_gui).grid(row=1,column=0)
-        tk.Button(self.root, text="Log out", command=self.logout).grid(row=0,column=1)
+        self.root.geometry('300x200')
+        self.root.title("ADMIN")
+        new_acc_button = tk.Button(self.root, text="New Account", font=('Courier New', 15), command=self.new_account_gui)
+        new_acc_button.grid(row=1,column=0, sticky="w")
+        tk.Label(self.root, text="", width=10).grid(row=0, column=0, columnspan=3)
+        tk.Button(self.root, text="New Department", font=('Courier New', 15), command=self.new_department_gui).grid(row=2,column=0, sticky="w")
+        tk.Label(self.root, text="", width=10).grid(row=3, column=0, columnspan=3)
+        tk.Label(self.root, text="", width=10).grid(row=4, column=0, columnspan=3)
+        tk.Label(self.root, text="", width=10).grid(row=5, column=0, columnspan=3)
+        tk.Label(self.root, text="", width=10).grid(row=6, column=0, columnspan=3)
+        tk.Label(self.root, text="", width=10).grid(row=7, column=0, columnspan=3)
+        logout_button = tk.Button(self.root, text="Log out", font=('Courier New', 15, "bold"), fg="red", command=self.logout)
+        logout_button.grid(row=7, column=1, sticky="we")
 
     def treasurer_gui(self):
         self.create_root()
@@ -152,6 +160,8 @@ class SystemGUI:
         self.login(account)
     def login_gui(self):
         self.create_root()
+        self.root.geometry('300x200')
+        self.root.title("LOGIN")
         login_names = [acc.name for acc in self.sys.accounts]
         selected = tk.StringVar()
 
